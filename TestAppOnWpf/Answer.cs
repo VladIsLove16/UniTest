@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TestAppOnWpf
 {
-    enum Answer
+    public enum Answer
     {
         Null=-1,
         First=0,

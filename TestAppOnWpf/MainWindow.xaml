@@ -14,9 +14,9 @@
         <Grid.RowDefinitions>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock x:Name="TestName" Text="Название теста" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="72" Width="230" Grid.Column="1"/>
-        <TextBlock x:Name="Question" Margin="2,92,488,389" TextWrapping="Wrap" Grid.Column="1"><Run Text="Вопрос"/></TextBlock>
-        <StackPanel x:Name="AnswerMenu" Grid.Column="1" Margin="10,178,463,113">
+        <TextBlock x:Name="TestTitleBlock" Text="Название теста" HorizontalAlignment="Left" Margin="3,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="72" Width="230" Grid.Column="1"/>
+        <TextBlock x:Name="QuestionBlock" Margin="12,87,462,366" TextWrapping="Wrap" Grid.ColumnSpan="2"><Run Text="Вопрос"/></TextBlock>
+        <StackPanel x:Name="AnswerMenu" Grid.Column="1" Margin="1,219,472,71">
             <RadioButton x:Name="Var1" Content="Var1"  HorizontalAlignment="Left"  VerticalAlignment="Top"/>
             <RadioButton x:Name="Var2" Content="Var2"  HorizontalAlignment="Left"  VerticalAlignment="Top"/>
             <RadioButton x:Name="Var3" Content="Var3"  HorizontalAlignment="Left"  VerticalAlignment="Top"/>
@@ -24,11 +24,11 @@
         </StackPanel>
         <Button x:Name="NextQuestion" Content="Следующий Вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="256,178,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="NextQuestion_Click"/>
         <Button x:Name="PreviousQuestion" Content="Предыдущий Вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="256,238,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="PreviousQuestion_Click"/>
-<Button x:Name="End" Content="Закончить" Grid.Column="1" HorizontalAlignment="Left" Margin="252,308,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="End_Click"/>
+        <Button x:Name="End" Content="Закончить" Grid.Column="1" HorizontalAlignment="Left" Margin="252,308,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="End_Click"/>
 
         <ComboBox x:Name="NamesCB" ItemsSource="{Binding StudentsNames}"
                   SelectedItem="{Binding SelectedOption}" Grid.Column="1" 
-                  Margin="326,88,266,445" RenderTransformOrigin="0.5,0.5" 
+                  Margin="326,88,267,463" RenderTransformOrigin="0.5,0.5" 
                   IsEditable="True" Text="{Binding UserInput}" 
                   TextInput="ComboBox_TextInput" SelectionChanged="OnNameSelectionChanged">
             <ComboBox.RenderTransform>
@@ -45,7 +45,7 @@
         <Button Content="Добавить" Grid.Column="1" HorizontalAlignment="Left"
                 Margin="342,128,0,0" VerticalAlignment="Top" Width="76" 
                 Click="AddName_Click" RenderTransformOrigin="-0.789,3.075"  />
-        <ComboBox x:Name="TestsNames" HorizontalAlignment="Left" 
+        <ComboBox x:Name="TestTitles" HorizontalAlignment="Left" 
                   VerticalAlignment="Top" Width="158" Grid.Column="1" 
                   Margin="260,15,0,0" Height="34" SelectionChanged="TestChanged" />
         <Button Content="Загрузить Тест" Grid.Column="1" HorizontalAlignment="Left" Margin="318,60,0,0" VerticalAlignment="Top" Width="100" Click="AddTest_Click" RenderTransformOrigin="-0.789,3.075"  />

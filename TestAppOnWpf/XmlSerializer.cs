@@ -10,7 +10,7 @@ namespace TestAppOnWpf
 {
     class MyXmlSerializer
     {
-        public static void SaveStudents(string filename, List<Student> Students)
+        public static void SaveStudentResults(string filename, List<Student> Students)
         {
             XmlSerializer  serializer = new XmlSerializer(typeof(List<Student>));
             using (FileStream fileStream = new FileStream(filename, FileMode.Create))
@@ -18,7 +18,7 @@ namespace TestAppOnWpf
                 serializer.Serialize(fileStream, Students);
             }
         }
-        public static List<Student> GetStudents(string filename)
+        public static List<Student> GetStudentResults(string filename)
         {
             XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
             using (FileStream fileStream = new FileStream(filename, FileMode.Open))

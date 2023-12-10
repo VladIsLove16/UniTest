@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ArrayOfStudent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Student>
+    <TestResults />
+    <stringName>f</stringName>
+  </Student>
+  <Student>
+    <TestResults />
+    <stringName>sdf</stringName>
+  </Student>
+  <Student>
+    <TestResults />
+    <stringName>wefsdf</stringName>
+  </Student>
+</ArrayOfStudent>

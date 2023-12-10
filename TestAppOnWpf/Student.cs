@@ -7,9 +7,18 @@ using System.Threading.Tasks;
 namespace TestAppOnWpf
 {
     [Serializable]
-    class Student
+    public class Student
     {
-        public List<Result> TestsResults;
-        public Name Name;
+        public static int ID;
+        public List<Result> TestResults;
+        public string stringName;
+        public Student()
+        {
+
+        }
+        public  Student(string name)
+        {
+            this.stringName = name;
+        }
     }
 }

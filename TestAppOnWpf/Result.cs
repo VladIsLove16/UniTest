@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TestAppOnWpf
 {
     [Serializable]
-    class Result
+    public class Result
     {
         public TimeSpan Time= TimeSpan.Zero;
         private int _RightAnswers=0;
@@ -17,10 +17,9 @@ namespace TestAppOnWpf
             {
                 if (value < 0)
                 {
-                    Console.WriteLine($"Колво _RightAnswers было {value}");
-                    _RightAnswers = Math.Max(value, 0);
+                    throw new Exception($"Колво _RightAnswers было {value}");
                 }
-                else _RightAnswers = value;
+                _RightAnswers = Math.Max(value, 0);
             }   
         }
         private int _WrongAnswers =0;
@@ -31,10 +30,9 @@ namespace TestAppOnWpf
             {
                 if (value < 0)
                 {
-                    Console.WriteLine($"Колво _WrongAnswers было {value}");
-                    _WrongAnswers = Math.Max(value, 0);
+                    throw new Exception($"Колво _RightAnswers было {value}");
                 }
-                else _WrongAnswers = value;
+                _WrongAnswers = Math.Max(value, 0);
             }
         }
         private int _Skipped =0;
@@ -45,11 +43,11 @@ namespace TestAppOnWpf
             {
                 if (value < 0)
                 {
-                    Console.WriteLine($"Колво _Skipped было {value}");
-                    _Skipped = Math.Max(value, 0);
+                    throw new Exception($"Колво _RightAnswers было {value}");
                 }
-                else _Skipped = value;
+                _Skipped = Math.Max(value, 0);
             }
         }
+        public Result() { }
     }
 }
