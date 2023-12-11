@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 
 namespace TestAppOnWpf
 {
-    internal class Repository
+    internal class TxtRepository
     {
+        public List<Student> GetStudentsFromFile(string studentsFolder)
+        {
+            return new List<Student>();
+        }
         public List<Test> LoadTestsFromDirectory()
         {
             List<Test> tests= new List<Test>();
@@ -24,14 +28,13 @@ namespace TestAppOnWpf
         public Test GetTestFromFile(string filepath)
         {
             Console.WriteLine("Loading Test from: " + filepath);
-            Test test = new Test();
-            LoadTestInfo(test,filepath);
+            Test test=LoadTestInfo(filepath);
             LoadAnswers(test);
             return test;
         }
-        public void LoadTestInfo(Test test,string filepath)
+        public Test LoadTestInfo(string filepath)
         {
-            test.FilePath = filepath;
+            Test test=new Test();
             var srcEncoding = Encoding.GetEncoding(1251);
             using (var src = new StreamReader(filepath, encoding: srcEncoding))
             {
@@ -42,24 +45,22 @@ namespace TestAppOnWpf
                 while (!src.EndOfStream)
                 {
                     while (String.IsNullOrEmpty(line = src.ReadLine()) && !src.EndOfStream) { }
-                    Question question = new Question { NumberInTest = Quectioncount, Id = Quectioncount, QuestionString = line };
+                    Question question = new Question { QuestionString = line };
                     //Console.WriteLine("Question: " + question.QuestionString);
                     //while (string.IsNullOrEmpty(src.ReadLine())) { }
                     for (int j = 0; j < 4; j++)
                     {
                         //SetPossibleAnswers
                         while ((line = src.ReadLine()) == null && !src.EndOfStream) { }
-                        if (question.PossibleAnswers.Count <= j)
-                            question.PossibleAnswers.Add(line);
-                        else
-                            question.PossibleAnswers[j] = line;
+                        question.AddPossibleAnswer(line);
                         //Console("Answer: " + line);
                     }
-                    test.Questions.Add(question);
+                    test.AddQuestion(question);
                     Quectioncount++;
                 }
                 Console.WriteLine(Quectioncount);
             }
+            return test;
         }
         public void LoadAnswers(Test test)
         {
@@ -80,17 +81,19 @@ namespace TestAppOnWpf
             var srcEncoding = Encoding.GetEncoding(1251);
             using (var src = new StreamReader(AnswerFile, encoding: srcEncoding))
             {
-                //for (int i = 0; i < CurrentTest.QuestionCount; i++)
-                int i = 0;
-                while (src.ReadLine() != null)
+                int i = 0; string line;
+                while ((line = src.ReadLine()) != null)
                 {
-                    Console.WriteLine(src.ReadLine());
-                    test.Questions[i].RightAnswer = (Answer)int.Parse(src.ReadLine()) - 1;
+                    test.QuestionCollection[i].SetRightAnswer((Answer) int.Parse(line) - 1);
                     Console.WriteLine("LoadAnswers" + i);
                     i++;
                 }
 
             }
+        }
+        public void SaveResults(string where,List<Student> what)
+        {
+            MyXmlSerializer.SaveStudentResults(where, what);
         }
     }
 }

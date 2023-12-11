@@ -18,10 +18,18 @@ namespace TestAppOnWpf
                 instance = new User();
             return instance;
         }
-        public string Name;//как быстро понять в коде функция получает или сетает имя, кроме создания для этого отдельных функций.
+        private string Name;//как быстро понять в коде функция получает или сетает имя, исключая создание для этого отдельных функций.
         public Dictionary<Question, Answer> Answers=new Dictionary<Question, Answer>();
         public Question CurrentQuestion { get; set; }
         public Test CurrentTest { get; set; }
+        public static Student ToStudent()
+        {
+           Student student= new Student();
+            student.AddResult(User.getInstance().CurrentTest, User.getInstance().Result);
+            student.stringName = User.getInstance().Name;
+            return student;
+
+        }
         public void SetName(string Name )
         {
             this.Name = Name;
@@ -32,7 +40,7 @@ namespace TestAppOnWpf
         }
         public void SetCurrentQuestion(int num)
         {
-            CurrentQuestion = CurrentTest.Questions[num];
+            CurrentQuestion = CurrentTest.QuestionCollection[num];
         }
         public void ClearAnswers()
         {
@@ -40,9 +48,10 @@ namespace TestAppOnWpf
         }
         public void SetAllAnswersToNull()
         {
-            for(int i = 0; i < CurrentTest.QuestionCount; i++)
+            Answers = new Dictionary<Question, Answer>(); 
+            for (int i = 0; i < CurrentTest.QuestionCount; i++)
             {
-                Answers[CurrentTest.Questions[i]] = (Answer)(-1);
+                Answers[CurrentTest.QuestionCollection[i]] = (Answer)(-1);
             }
         }
         public void OnCurrentTestChanged()
@@ -53,10 +62,24 @@ namespace TestAppOnWpf
         {
             Result = new Result();
             Name = null;
-            Answers = new Dictionary<Question, Answer>();
             SetAllAnswersToNull();
+            if (CurrentTest != null) CurrentTest.ShuffleQuestions();
             SetCurrentQuestion(0);
+        }
 
+        internal void SetTestResult()
+        {
+            foreach (Question question in Answers.Keys)
+            {
+                if (Answers[question] == question.RightAnswer) Result.RightAnswers++;
+                else if (Answers[question] == (Answer)(-1)) Result.Skipped++;
+                else Result.WrongAnswers++;
+            }
+        }
+
+        internal void NextQuestion()
+        {
+            throw new NotImplementedException();
         }
     }
 }

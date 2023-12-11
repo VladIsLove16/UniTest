@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,18 +13,59 @@ namespace TestAppOnWpf
     [Serializable]
     public class Test
     {
+        public Test() { }
+        public Test(string title) {Title = title; }
+        public QuestionCollection QuestionCollection = new QuestionCollection();
+        public int QuestionCount { get { return QuestionCollection.QuestionCount; } }
         public string Title;
-        public string FilePath;
         //public Answers Answers=new Answers();
         public string AnswerPath;
         public int Number;
-        //private int questionCount;
-        public int QuestionCount
+        public static bool operator ==(Test obj1, Test obj2)
         {
-            get { return Questions.Count; }
+            if (ReferenceEquals(obj1, obj2))
+                return true;
+
+            if (ReferenceEquals(obj1, null) || ReferenceEquals(obj2, null))
+                return false;
+
+            return obj1.Title == obj2.Title;
         }
-        public List<Question> Questions=new List<Question>();
-       
-       
+        public static bool operator !=(Test test, Test test1)
+        {
+            return !(test == test1);
+        }
+        //private int questionCount;
+        public void AddQuestion(Question question)
+        {
+            QuestionCollection.AddQuestion(question);
+        }
+        public void AddQuestion(string question,List<string>possibleAnswers,Answer rightAnswer )
+        {
+
+        }
+        public QuestionCollection GetQuestions()
+        {
+            return QuestionCollection;
+        }
+        public void SetQuestions(QuestionCollection questions)
+        {
+            QuestionCollection = questions;
+        }
+        public void ShuffleQuestions()
+        {
+            QuestionCollection.ShuffleQuestions();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Test test &&
+                   Title == test.Title;
+        }
+
+        public override int GetHashCode()
+        {
+            return 434131217 + EqualityComparer<string>.Default.GetHashCode(Title);
+        }
     }
 }

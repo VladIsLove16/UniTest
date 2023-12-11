@@ -13,6 +13,5 @@ namespace TestAppOnWpf
         Second=1,
         Third=2,
         Fourth=3
-
     }
 }

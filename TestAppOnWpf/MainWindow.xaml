@@ -28,7 +28,7 @@
 
         <ComboBox x:Name="NamesCB" ItemsSource="{Binding StudentsNames}"
                   SelectedItem="{Binding SelectedOption}" Grid.Column="1" 
-                  Margin="326,88,267,463" RenderTransformOrigin="0.5,0.5" 
+                  Margin="326,88,275,443" RenderTransformOrigin="0.5,0.5" 
                   IsEditable="True" Text="{Binding UserInput}" 
                   TextInput="ComboBox_TextInput" SelectionChanged="OnNameSelectionChanged">
             <ComboBox.RenderTransform>
@@ -43,11 +43,12 @@
                    TextWrapping="WrapWithOverflow" VerticalAlignment="Top"
                    Height="18" Width="66" Grid.Column="1"><Run Text="Ваше Им"/><Run Text="я:"/></TextBlock>
         <Button Content="Добавить" Grid.Column="1" HorizontalAlignment="Left"
-                Margin="342,128,0,0" VerticalAlignment="Top" Width="76" 
+                Margin="561,18,0,0" VerticalAlignment="Top" Width="76" 
                 Click="AddName_Click" RenderTransformOrigin="-0.789,3.075"  />
         <ComboBox x:Name="TestTitles" HorizontalAlignment="Left" 
                   VerticalAlignment="Top" Width="158" Grid.Column="1" 
                   Margin="260,15,0,0" Height="34" SelectionChanged="TestChanged" />
         <Button Content="Загрузить Тест" Grid.Column="1" HorizontalAlignment="Left" Margin="318,60,0,0" VerticalAlignment="Top" Width="100" Click="AddTest_Click" RenderTransformOrigin="-0.789,3.075"  />
+        <Button Grid.Column="1" Content="Начать Тест" HorizontalAlignment="Left" Margin="254,136,0,0" VerticalAlignment="Top" Width="206" Height="37" Click="StartTest"/>
     </Grid>
 </Window>

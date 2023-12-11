@@ -12,7 +12,10 @@ using System.Linq;
 using System.Windows.Shapes;
 //Вопросы: 
 //1. User строка 21
-//2. делегаты для тестов и вопросов
+//2. Куда деть юзера?
+//3. Test.LoadFromSql или sqlRep.LoadTestFromSql какой вариант лучше и почему
+//4. строка 102 и делегаты для тестов и вопросов(при изменении текущего теста и вопросов) как это оформить... строка 206 про тестколлекшн
+//5. Коллекции студнентов типов лист и словарь очень сильно себя повторяют;
 namespace TestAppOnWpf
 {
     public class TestChangedEventArgs : EventArgs
@@ -22,11 +25,11 @@ namespace TestAppOnWpf
     public partial class MainWindow : System.Windows.Window 
     {
         TestCollection TestCollection = new TestCollection();
-        Repository repository=new Repository();
-        Students Students=new Students();
+        IStudentCollection StudentCollection = new StudentDictCollection();
+        TxtRepository Repository=new TxtRepository();
         string AnswersFolder = @"Answers";
         string DatabasePath = "D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\DataBase\\database.xml";
-        public event EventHandler<TestChangedEventArgs> CurrentTestChanged;
+        string studentsFolder = "A";
         public Test CurrentTest
         { 
             get
@@ -44,12 +47,13 @@ namespace TestAppOnWpf
             set
             {
                 User.getInstance().CurrentQuestion = value;
-                OnCurrentTestChanged();
+                OnCurrentQuestionChange();
             }
         }
-            
-        
-        
+
+        public event EventHandler<TestChangedEventArgs> CurrentTestChanged;
+
+
         //Получение первой рабочей страницы
 
         public MainWindow()
@@ -59,19 +63,19 @@ namespace TestAppOnWpf
             LoadTests();
             LoadStudentResults();
             NewUserEnter();
+            ShowQuestion(CurrentQuestion);
             Closing += MainWindow_Closing; 
             
         }
         #region Loading
         public void LoadTests()
         {
-            List<Test> tests = repository.LoadTestsFromDirectory();
+            List<Test> tests = Repository.LoadTestsFromDirectory();
             foreach(Test test in tests)
             {
                 TestCollection.AddTest(test);
             }
-            TestTitles.ItemsSource = TestCollection.GetTestTitles();
-            TestTitles.SelectedIndex = 0;
+            CurrentTest = TestCollection[0];
         }
 
         //private void loadstudentsnames()
@@ -92,23 +96,27 @@ namespace TestAppOnWpf
 
         private void LoadStudentResults()
         {
-            Students.StudentList = MyXmlSerializer.GetStudentResults(DatabasePath);
-            NamesCB.ItemsSource= Students.GetStudentNames();
+            StudentCollection.Set(Repository.GetStudentsFromFile(studentsFolder));
+            NamesCB.ItemsSource= StudentCollection.GetNames();//такую функцию нужно не здесь написать, а выполнять каждый раз когда меняется список студентов
         }
-        public void ShowTest(object sender, TestChangedEventArgs e)
+        #endregion
+        #region Showing
+        public void ShowTestBoxes()
         {
-            TestTitleBlock.Text =CurrentTest.Title;
-            ShowQuestion(CurrentTest.Questions[0]);
-            User.getInstance().ClearAnswers();
+            TestTitleBlock.Visibility = Visibility.Visible;
+            //TestTitleBlock.Text =CurrentTest.Title;
+           // ShowQuestion(CurrentTest.GetQuestions()[0]);
+            //User.getInstance().ClearAnswers();
         }
        
         public void ShowQuestion(Question question)
         {
             QuestionBlock.Text = question.QuestionString;
             int i = 0;
+            List<string> possibleAnswers = question.GetPossibleAnswers();
             foreach (RadioButton el in AnswerMenu.Children)
             {
-                el.Content = question.PossibleAnswers[i++];
+                el.Content = possibleAnswers[i++];
             }
             if (User.getInstance().Answers[question] != (Answer)(-1))
             {
@@ -124,6 +132,7 @@ namespace TestAppOnWpf
                     el.IsChecked = false;
                 }
             }
+            Console.WriteLine(CurrentQuestion.NumberInTest + " " + CurrentQuestion.Id);
         }
         
         
@@ -144,68 +153,69 @@ namespace TestAppOnWpf
                 }
             }
         }
-        private void SaveResultToFile()
+        private void SaveStudentResult()
         {
-            MyXmlSerializer.SaveStudentResults(DatabasePath, Students.StudentList);
-            //for (int i = 0; i < Students.StudentCount; i++)
-            //{
-                
-                //User.getInstance().CurrentQuestion
-                
-                //if (worksheet.Cells[i + 3, 1].Value!=null && (string) worksheet.Cells[i + 3, 1].Value == UserName)
-                //{   
-                //    if (worksheet.Cells[i + 3, TestNumber*3 -1].Value==null)
-                //    {
-                //        worksheet.Cells[i + 3, TestNumber*3 -1].Value = UserRightAnswers;
-                //        worksheet.Cells[i + 3, TestNumber* 3 ].Value = UserWrongAnswers;
-                //        worksheet.Cells[i + 3, TestNumber* 3 +1].Value = UserSkippedAnswers;
-                //    }
-                //    else
-                //    {
-                //        MessageBoxResult result = MessageBox.Show("Результаты уже сохранены. Перезаписать?", "", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                //        if (result == MessageBoxResult.Yes)
-                //        {
-                //            worksheet.Cells[i + 3, TestNumber * 3 - 1].Value = UserRightAnswers;
-                //            worksheet.Cells[i + 3, TestNumber * 3].Value = UserWrongAnswers;
-                //            worksheet.Cells[i + 3, TestNumber * 3 + 1].Value = UserSkippedAnswers;
-                //        }
-
-                //    }
-                //}
-            //}
+            Repository.SaveResults(DatabasePath, StudentCollection.Get());
         }
        
         #endregion
         #region Buttons
         private void PreviousQuestion_Click(object sender, RoutedEventArgs e)
         {
-            if (User.getInstance().CurrentQuestion != CurrentTest.Questions[0])
+            if (User.getInstance().CurrentQuestion != CurrentTest.GetQuestions()[0])
             {
                 SaveQuestionAnswer();
-                User.getInstance().CurrentQuestion = CurrentTest.Questions[User.getInstance().CurrentQuestion.NumberInTest-1];
-                ShowQuestion(User.getInstance().CurrentQuestion);
+                CurrentQuestion = CurrentTest.GetQuestions()[CurrentQuestion.NumberInTest -1];
             }
         }
         private void NextQuestion_Click(object sender, RoutedEventArgs e)
         {
-            if (User.getInstance().CurrentQuestion.Id == CurrentTest.QuestionCount-1) ShowExitDialogBox();
+            if (User.getInstance().CurrentQuestion.NumberInTest == CurrentTest.QuestionCount-1) ShowExitDialogBox();
             else
             {
                 SaveQuestionAnswer();
-                User.getInstance().CurrentQuestion = CurrentTest.Questions[User.getInstance().CurrentQuestion.NumberInTest + 1];
-                ShowQuestion(User.getInstance().CurrentQuestion);
+                CurrentQuestion = CurrentTest.GetQuestions()[CurrentQuestion.NumberInTest + 1];//хочу здесь написать  User.getInstance().NextQuestion();
+                                                                                               //но это не вызовет OnCurrentQuestionChange
             }
 
         }
-        #endregion Buttons
-        private void CheckResult()
+        private void End_Click(object sender, RoutedEventArgs e)
         {
-            foreach(Question question in User.getInstance().Answers.Keys) 
+            SaveQuestionAnswer();
+            ShowExitDialogBox();
+        }
+        private void AddName_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(NamesCB.Text)) return;
+            if (!StudentCollection.GetNames().Contains(NamesCB.Text))
+                StudentCollection.Add(new Student(NamesCB.Text));
+            NamesCB.Text = "";
+            NamesCB.ItemsSource = StudentCollection.GetNames();
+        }
+
+        private void AddTest_Click(object sender, RoutedEventArgs e)
+        {
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog();
+            openFileDialog.Filter = "Text Files (*.txt)|*.txt";
+
+            if (openFileDialog.ShowDialog() == true)
             {
-                if (User.getInstance().Answers[question] == question.RightAnswer) User.getInstance().Result.RightAnswers++;
-                else if (User.getInstance().Answers[question] == (Answer)(-1)) User.getInstance().Result.Skipped++;
-                else User.getInstance().Result.WrongAnswers++;
+                Test test = Repository.GetTestFromFile(openFileDialog.FileName);
+                TestCollection.AddTest(test);
+                OnTestCollectionChanged();//и это тоже не здесь надо писать 
             }
+        }
+
+        private void OnTestCollectionChanged()
+        {
+            TestTitles.ItemsSource=TestCollection.GetTestTitles();
+        }
+        #endregion Buttons
+        private void StartTest(object sender, RoutedEventArgs e)
+        {
+            SetUserName();
+            StartTimer();
+            ShowTestBoxes();
         }
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
@@ -215,6 +225,7 @@ namespace TestAppOnWpf
         {
             User.getInstance().NewUserEnter();
         }
+        #region messageBoxes
         public void ShowExitDialogBox()
         {
             MessageBoxResult result = MessageBox.Show("Завершить тест?", "Завершение", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
@@ -222,19 +233,19 @@ namespace TestAppOnWpf
             {
                 try
                 {
-                    if (string.IsNullOrEmpty((string)NamesCB.SelectedItem))
+                    if (User.getInstance().GetName()==null || User.getInstance().GetName() == "")
                     {
-                        MessageBox.Show("Вы не ввели имя");
+                        EmptyUserNameError();
                     }
                     else
                     {
                         //SaveNames();
                        // Console.WriteLine("SaveNames");
-                        CheckResult();
-                        Console.WriteLine("CheckResult");
-                        SaveResultToFile();
-                        Console.WriteLine("SaveResult");
-                        ShowResults();
+                        SaveTestResult();
+                        Console.WriteLine("SaveTestResult");
+                        SaveStudentResult();
+                        Console.WriteLine("SaveStudentResults");
+                        ShowResultBox();
                         Console.WriteLine("ShowResults");
                         NewUserEnter();
                         Console.WriteLine("NewUserEnter");
@@ -247,20 +258,33 @@ namespace TestAppOnWpf
                 }
             }
         }
-        private void ShowResults()
-        {
 
+        
+
+        private void ShowResultBox()
+        {
             MessageBox.Show("Тест успешно завершен\nПравильно ответов: " + User.getInstance().Result.RightAnswers + " из " + CurrentTest.QuestionCount); ;
         }
+        #endregion
+        #region ErrorMessages
+        private void EmptyUserNameError()
+        {
+            MessageBox.Show("Имя пользователя пусто или отсутствует");
+        }
 
-       
+        private void EmptyNameCB()
+        {
+            MessageBox.Show("Вы не ввели имя");
+        }
+        
         #region OnChange
         private void OnNameSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(NamesCB.SelectedItem!=null)User.getInstance().Name = NamesCB.SelectedItem.ToString();
-            Console.WriteLine(User.getInstance().Name);
+            SetUserName();
+            Console.WriteLine(User.getInstance().GetName());
         }
-        
+
+
         private void TestChanged(object sender, SelectionChangedEventArgs e)
         {
             // NamesCB.Text = (string)TestTitles.SelectedItem;
@@ -268,59 +292,61 @@ namespace TestAppOnWpf
             //       currentTest.Number = TestTitles.SelectedIndex+1;
             // }
             CurrentTest = TestCollection.GetTest((string)TestTitles.SelectedItem);
-            NewUserEnter();
-            OnCurrentQuestionChange();
-
-        }
-        void OnCurrentQuestionChange()
-        {
-            TestTitleBlock.Text=CurrentTest.Title;
-            QuestionBlock.Text = CurrentQuestion.QuestionString;
-            ShowQuestion(CurrentQuestion);
         }
         public void OnCurrentTestChanged()
         {
             CurrentTestChanged?.Invoke(this, new TestChangedEventArgs());
+            ShowCurrentTest();
+            NewUserEnter();
         }
-        private void End_Click(object sender, RoutedEventArgs e)
+        private void ShowCurrentTest()
         {
-            SaveQuestionAnswer();
-            ShowExitDialogBox();
+            TestTitleBlock.Text = CurrentTest.Title;
+            ShowCurrentQuestion();
         }
-        #endregion
-
-        #region AddObjects
-        private void AddName_Click(object sender, RoutedEventArgs e)
+        void OnCurrentQuestionChange()
         {
-            if (string.IsNullOrEmpty(NamesCB.Text)) return;
-            if (!Students.GetStudentStringNames().Contains(NamesCB.Text) )
-                Students.AddStudent(new Student(NamesCB.Text));
-            NamesCB.Text = "";
-            NamesCB.ItemsSource = Students.GetStudentStringNames();
+            ShowCurrentQuestion();
         }
-
-    private void AddTest_Click(object sender, RoutedEventArgs e)
+        private void ShowCurrentQuestion()
         {
-            var openFileDialog = new Microsoft.Win32.OpenFileDialog();
-            openFileDialog.Filter = "Text Files (*.txt)|*.txt";
-
-            if (openFileDialog.ShowDialog() == true)
-            {
-                if (!TestCollection.GetTestPathes().Contains(openFileDialog.FileName))
-                {
-                    TestCollection.AddTest(repository.GetTestFromFile(openFileDialog.FileName));
-                }
-            }
+            QuestionBlock.Text = CurrentQuestion.QuestionString;
         }
+
         #endregion
         private void ComboBox_TextInput(object sender, TextCompositionEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-           
-
-            // Добавление userInput в коллекцию Items
-            
         }
+
+        private void SaveTestResult()
+        {
+            User.getInstance().SetTestResult();
+            Student student = User.ToStudent();
+            string name = student.stringName;
+            if (!StudentCollection.Contains(name))
+            {
+                StudentCollection.Add(student);
+            }
+            else
+            {
+                StudentCollection[name].AddResult(User.getInstance().CurrentTest,User.getInstance().Result);
+            }
+
+        }
+        private void SetUserName()
+        {
+            if (NamesCB.Text == "") { EmptyNameCB(); return; }
+            User.getInstance().SetName(NamesCB.Text.ToString());
+        }
+
         
+
+        private void StartTimer()
+        {
+            Console.WriteLine("TimerStart...");
+            Console.WriteLine("TimerStarted.");
+        }
+        #endregion
     }
 }

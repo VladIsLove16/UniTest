@@ -10,6 +10,24 @@ namespace TestAppOnWpf
     internal class TestCollection
     {
         private Dictionary<string, Test> TestDictionary=new Dictionary<string, Test>();
+        public Test this[int index]
+        {
+            get
+            {
+                return TestDictionary.ElementAt(index).Value;
+            }
+        }
+        public Test this[string title]
+        {
+            get
+            {
+                return TestDictionary[title];
+            }
+            set
+            {
+                TestDictionary[title] = value;
+            }
+        }
         public Test GetTest(string Title)
         {
             return TestDictionary[Title];
@@ -25,10 +43,7 @@ namespace TestAppOnWpf
         }
         public void AddTest(Test test)
         {
-            if (test.FilePath == null)
-            {
-                throw new Exception("Test filePath==null");
-            }
+            if (test.Title == null) test.Title = "NotSet";
             if(TestDictionary.ContainsKey(test.Title))
             {
                 Console.WriteLine("Тест {test.Title} уже существует", test.Title);
@@ -36,13 +51,13 @@ namespace TestAppOnWpf
             }
             TestDictionary[test.Title]=test;
         }
-        public List<string> GetTestPathes()
+        private List<string> GetTestPathes()
         {
             if (TestDictionaryNullDetection()) return null;
             List<string> testsPathes=new List<string>();
             foreach (Test test in TestDictionary.Values)
             {
-                testsPathes.Add(test.FilePath);
+                //testsPathes.Add(test.FilePath);
             }
             return testsPathes;
         }
@@ -61,6 +76,5 @@ namespace TestAppOnWpf
             if (TestDictionary.Count == 0) { return true; }
             return false;
         }
-
     }
 }

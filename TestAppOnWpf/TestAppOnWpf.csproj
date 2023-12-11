@@ -105,11 +105,14 @@
     </ApplicationDefinition>
     <Compile Include="Answer.cs" />
     <Compile Include="Answers.cs" />
+    <Compile Include="IStudentCollection.cs" />
     <Compile Include="Name.cs" />
-    <Compile Include="Repository.cs" />
+    <Compile Include="QuestionCollection.cs" />
+    <Compile Include="TxtRepository.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="Student.cs" />
-    <Compile Include="Students.cs" />
+    <Compile Include="StudentDictCollection.cs" />
+    <Compile Include="StudentListCollection.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="TestCollection.cs" />
     <Compile Include="User.cs" />
