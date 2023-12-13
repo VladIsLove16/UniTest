@@ -4,4 +4,16 @@
     <ID>1</ID>
     <stringName>aaa</stringName>
   </Student>
+  <Student>
+    <ID>2</ID>
+    <stringName>Ffff</stringName>
+  </Student>
+  <Student>
+    <ID>3</ID>
+    <stringName>Ghfghfg</stringName>
+  </Student>
+  <Student>
+    <ID>4</ID>
+    <stringName>егор</stringName>
+  </Student>
 </ArrayOfStudent>

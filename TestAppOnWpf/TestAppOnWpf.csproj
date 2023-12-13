@@ -108,7 +108,8 @@
     <Compile Include="IStudentCollection.cs" />
     <Compile Include="Name.cs" />
     <Compile Include="QuestionCollection.cs" />
-    <Compile Include="TxtRepository.cs" />
+    <Compile Include="StopwatchA.cs" />
+    <Compile Include="TxtAndXmlRepository.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="Student.cs" />
     <Compile Include="StudentDictCollection.cs" />

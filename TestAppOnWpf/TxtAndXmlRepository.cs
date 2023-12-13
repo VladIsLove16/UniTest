@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace TestAppOnWpf
 {
-    internal class TxtRepository
+    internal class TxtAndXmlRepository
     {
         public List<Student> GetStudentsFromFile(string studentsFolder)
         {
-            return new List<Student>();
+           return MyXmlSerializer.GetStudentResults(studentsFolder);
+
+        }
+        public void SaveStudents(string where, List<Student> what)
+        {
+            MyXmlSerializer.SaveStudentResults(where, what);
         }
         public List<Test> LoadTestsFromDirectory()
         {
@@ -90,10 +95,6 @@ namespace TestAppOnWpf
                 }
 
             }
-        }
-        public void SaveResults(string where,List<Student> what)
-        {
-            MyXmlSerializer.SaveStudentResults(where, what);
         }
     }
 }

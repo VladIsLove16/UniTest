@@ -21,7 +21,21 @@ namespace TestAppOnWpf
         private string Name;//как быстро понять в коде функция получает или сетает имя, исключая создание для этого отдельных функций.
         public Dictionary<Question, Answer> Answers=new Dictionary<Question, Answer>();
         public Question CurrentQuestion { get; set; }
-        public Test CurrentTest { get; set; }
+        public Test CurrentTest
+        {
+            get
+            {
+                return CurrentTest;
+            }
+            set
+            {
+                CurrentTest = value;
+                //OnCurrentTestChanged();
+                OnTestChanged?.Invoke();
+            }
+        }
+        public delegate void Notify();
+        public event Notify OnTestChanged,OnQuestionChanged;
         public static Student ToStudent()
         {
            Student student= new Student();
@@ -54,17 +68,19 @@ namespace TestAppOnWpf
                 Answers[CurrentTest.QuestionCollection[i]] = (Answer)(-1);
             }
         }
-        public void OnCurrentTestChanged()
+        public void SetCurrentTest(Test Test)
         {
-
+            CurrentTest = Test;
+            CurrentQuestion = CurrentTest.QuestionCollection[0];
+            Result = new Result();
+            SetAllAnswersToNull();
         }
         public void NewUserEnter()
         {
             Result = new Result();
             Name = null;
-            SetAllAnswersToNull();
-            if (CurrentTest != null) CurrentTest.ShuffleQuestions();
-            SetCurrentQuestion(0);
+            CurrentTest = null;
+            CurrentQuestion = null;
         }
 
         internal void SetTestResult()
@@ -75,11 +91,6 @@ namespace TestAppOnWpf
                 else if (Answers[question] == (Answer)(-1)) Result.Skipped++;
                 else Result.WrongAnswers++;
             }
-        }
-
-        internal void NextQuestion()
-        {
-            throw new NotImplementedException();
         }
     }
 }

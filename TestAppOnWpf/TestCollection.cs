@@ -46,10 +46,13 @@ namespace TestAppOnWpf
             if (test.Title == null) test.Title = "NotSet";
             if(TestDictionary.ContainsKey(test.Title))
             {
-                Console.WriteLine("Тест {test.Title} уже существует", test.Title);
+                Console.WriteLine($"Тест {test.Title} уже существует");
                 test.Title = test.Title + "2";
             }
             TestDictionary[test.Title]=test;
+        }
+        public void AddTests(List<Test> tests) {
+            foreach (Test test in tests) AddTest(test);
         }
         private List<string> GetTestPathes()
         {
