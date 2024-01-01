@@ -1,34 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.IO;
 using System.ComponentModel;
 using System.Windows.Input;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
 using System.Linq;
-using System.Windows.Shapes;
-using System.Threading;
 using System.Diagnostics;
+using System.Text;
+using System.IO;
 using static TestAppOnWpf.MainWindow;
-using System.CodeDom;
-using System.Data.SqlClient;
-//Вопросы: 
-//1. User строка 21
-//2. Куда деть юзера?
-//3. Test.LoadFromSql или sqlRep.LoadTestFromSql какой вариант лучше и почему
-//4. строка 102 и делегаты для тестов и вопросов(при изменении текущего теста и вопросов) как это оформить... строка 206,76 про тестколлекшн
-//5. Коллекции студнентов типов лист и словарь очень сильно себя повторяют;
-//6. Как прервать выполнение функции
 namespace TestAppOnWpf
 {
-    public class TestChangedEventArgs : EventArgs
-    {
-        
-    }
-    public partial class MainWindow : System.Windows.Window 
+    public partial class MainWindow : Window 
     {
         TestCollection TestCollection = new TestCollection();
         IStudentCollection StudentCollection = new StudentDictCollection();
@@ -47,8 +30,6 @@ namespace TestAppOnWpf
             set
             {
                 User.getInstance().CurrentTest = value;
-                OnCurrentTestChanged();
-                notify?.Invoke();
             }
         }
         public Question CurrentQuestion
@@ -58,16 +39,18 @@ namespace TestAppOnWpf
             set
             {
                 User.getInstance().CurrentQuestion = value;
-                OnCurrentQuestionChange();
-                notify?.Invoke();
             }
         }
 
-        public event EventHandler<TestChangedEventArgs> CurrentTestChanged;
+        public object Answers
+        {
+            get
+            {
+                return User.getInstance().Answers;
+            }
+        }
 
-
-        //Получение первой рабочей страницы
-
+        public bool Testing { get; private set; }
         public MainWindow()
         {
             InitializeComponent();
@@ -77,12 +60,8 @@ namespace TestAppOnWpf
             NewUserEnter();
             Closing += MainWindow_Closing;
             User.getInstance().OnTestChanged += OnCurrentTestChanged;
-           // notify += EventInvoke;
-        }
-
-        private void EventInvoke()
-        {
-            Console.WriteLine("event Invoked");
+            User.getInstance().OnQuestionChanged += OnCurrentQuestionChange;
+          
         }
         #region Loading
         public void LoadDefaultTests()
@@ -91,23 +70,6 @@ namespace TestAppOnWpf
             OnTestCollectionChanged();//опять таки паттерн обсервер
             CurrentTest = TestCollection[0];
         }
-
-        //private void loadstudentsnames()
-        //{
-        //    observablecollection<string> studentnames = new observablecollection<string>();
-        //    string name;
-        //    int i = 0;
-        //    name = (string)worksheet.cells[i++ + 3, 1].value;
-        //    do
-        //    {
-        //        studentnames.add(name);
-        //        name = (string)worksheet.cells[i++ + 3, 1].value;
-        //    } while (!string.isnullorempty(name));
-        //    namescb.itemssource = studentnames;
-        //    namescb.selectedindex = 0;
-        //    namescb.text = namescb.items.tostring();
-        //}
-
         private void LoadStudents()
         {
             Console.WriteLine($"Загрузка списка студентов из файла: {DatabasePath}...");
@@ -133,15 +95,7 @@ namespace TestAppOnWpf
             AnswerMenu.Visibility = Visibility.Collapsed;
         }
 
-        private void ShowPossibleAnswers()
-        {
-            List<string> possibleAnswers = CurrentQuestion.GetPossibleAnswers();
-            int i = 0;
-            foreach (RadioButton el in AnswerMenu.Children)
-            {
-                el.Content = possibleAnswers[i++];
-            }
-        }
+     
 
 
         #endregion
@@ -155,7 +109,7 @@ namespace TestAppOnWpf
                 {
                     if (button.IsChecked == true)
                     {
-                        User.getInstance(). Answers[User.getInstance().CurrentQuestion] = (Answer)index;
+                        User.getInstance().SaveAnswer(CurrentQuestion, (Answer)index);
                     }
                     else index++;
                 }
@@ -170,10 +124,10 @@ namespace TestAppOnWpf
         #region Buttons
         private void PreviousQuestion_Click(object sender, RoutedEventArgs e)
         {
-            if (User.getInstance().CurrentQuestion != CurrentTest.GetQuestions()[0])
+            if (User.getInstance().CurrentQuestion != CurrentTest.GetQuestionCollection()[0])
             {
                 SaveQuestionAnswer();
-                CurrentQuestion = CurrentTest.GetQuestions()[CurrentQuestion.NumberInTest -1];
+                CurrentQuestion = CurrentTest.GetQuestionCollection()[CurrentQuestion.NumberInTest -1];
                 
             }
         }
@@ -184,13 +138,21 @@ namespace TestAppOnWpf
             else
             {
                 SaveQuestionAnswer();
-                CurrentQuestion = CurrentTest.GetQuestions()[CurrentQuestion.NumberInTest + 1];//хочу здесь написать  User.getInstance().NextQuestion();
+                GoToTheNextQuestion();
+                //хочу здесь написать  User.getInstance().NextQuestion();
                                                                                                //но это не вызовет OnCurrentQuestionChange
             }
 
         }
+
+        private void GoToTheNextQuestion()
+        {
+            CurrentQuestion = CurrentTest.GetQuestionCollection()[CurrentQuestion.NumberInTest + 1];
+        }
+
         private void End_Click(object sender, RoutedEventArgs e)
         {
+            if (!Testing) { MessageBox.Show("Тестирование ещё не началось"); return; }
             SaveQuestionAnswer();
             ShowExitDialogBox();
         }
@@ -223,9 +185,15 @@ namespace TestAppOnWpf
         #endregion Buttons
         private void StartTest(object sender, RoutedEventArgs e)
         {
+            if (CurrentTest == null) { MessageBox.Show("Выберите тест"); return; }
             if (!SetUserName()) return;
+            Testing = true;
             StartTimer();
             ShowTestBoxes();
+            foreach (Answer a in User.getInstance().Answers.Answers.Values)
+            {
+                Log("Ответ:"+a);
+            }
         }
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
@@ -234,6 +202,7 @@ namespace TestAppOnWpf
         private void NewUserEnter()
         {
             User.getInstance().NewUserEnter();
+            Testing = false;    
             StopTimer();
             ResetTimer();
             HideTestBoxes();
@@ -267,10 +236,13 @@ namespace TestAppOnWpf
                         Console.WriteLine("SaveTestResult");
                         SaveStudentResult();
                         Console.WriteLine("SaveStudentResults");
+
+                        Log("Правильных ответов" + User.getInstance().Result.RightAnswers);
                         ShowResultBox();
                         Console.WriteLine("ShowResults");
                         NewUserEnter();
                         Console.WriteLine("NewUserEnter");
+                        Log("Правильных ответов"+User.getInstance().Result.RightAnswers);
                     }
                 }
                 catch (Exception ex)
@@ -280,12 +252,13 @@ namespace TestAppOnWpf
                 }
             }
         }
-
-        
-
         private void ShowResultBox()
         {
-            MessageBox.Show("Тест успешно завершен\nПравильно ответов: " + User.getInstance().Result.RightAnswers + " из " + CurrentTest.QuestionCount); ;
+            MessageBox.Show(User.getInstance().GetName()+", Тест успешно завершен" +
+                "\nПравильно ответов: " + User.getInstance().Result.RightAnswers + " из " + CurrentTest.QuestionCount+ 
+                "\nПропущено: " + User.getInstance().Result.Skipped+
+                "\nЗатрачено: " + User.getInstance().Result.Time 
+                );
         }
         #endregion
         #region ErrorMessages
@@ -293,62 +266,85 @@ namespace TestAppOnWpf
         {
             MessageBox.Show("Имя пользователя пусто или отсутствует");
         }
-
         private void EmptyNameCB()
         {
             MessageBox.Show("Вы не ввели имя");
         }
-        
         #region OnChange
         private void OnNameSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Console.WriteLine("Текущий пользователь: "+User.getInstance().GetName());
         }
-
-
         private void TestChanged(object sender, SelectionChangedEventArgs e)
         {
             // NamesCB.Text = (string)TestTitles.SelectedItem;
             // if (TestTitles.SelectedItem != null) {
             //       currentTest.Number = TestTitles.SelectedIndex+1;
             // }
-            CurrentTest = TestCollection.GetTest((string)TestTitles.SelectedItem);
+            Test test= TestCollection.GetTest((string)TestTitles.SelectedItem);
+            if (test == null)
+            {
+                MessageBox.Show("test==null");
+            }
+            else
+                CurrentTest = test;
         }
-        public void OnCurrentTestChanged()
+        private void SetCurrentQuestionAsDefault()
         {
-            CurrentTestChanged?.Invoke(this, new TestChangedEventArgs());
-            CurrentTest.ShuffleQuestions();
-            User.getInstance().SetCurrentTest(CurrentTest);
-            StopTest();
-            ShowCurrentTest();
+            CurrentQuestion = CurrentTest.GetQuestionCollection()[0];
         }
-
         private void StopTest()
         {
             
         }
-
         private void ShowCurrentTest()
         {
             TestTitleBlock.Text = CurrentTest.Title;
             ShowCurrentQuestion();
         }
+        public void OnCurrentTestChanged()
+        {
+            if (CurrentTest == null) return;
+            Log("CurrentTes:"+CurrentTest.Title);
+            foreach(var item in CurrentTest.GetQuestionCollection().GetQuestions()) { Log(item.QuestionString); }
+            CurrentTest.ShuffleQuestions();
+            foreach (var item in CurrentTest.GetQuestionCollection().GetQuestions()) { Log(item.QuestionString); }
+            SetCurrentQuestionAsDefault();
+            StopTest();
+            ShowCurrentTest();
+        }
         void OnCurrentQuestionChange()
         {
+            if (CurrentQuestion == null) return;
+            Log("текущий вопрос:"+CurrentQuestion.QuestionString);
+            Log("Правильный ответ:"+CurrentQuestion.RightAnswer);
             ShowCurrentQuestion();
+
         }
         private void ShowCurrentQuestion()
         {
-            QuestionBlock.Text = CurrentQuestion.QuestionString;
+            if (CurrentQuestion == null) { Debug.WriteLine("CurrentQuestion==Null"); return; }
+            ShowQuestionString();
             ShowPossibleAnswers();
             ShowSelectedAnswer();
             Console.WriteLine(CurrentQuestion.NumberInTest + " " + CurrentQuestion.Id);
         }
-
+        private void ShowQuestionString()
+        {
+            QuestionBlock.Text = CurrentQuestion.QuestionString;
+        }
+        private void ShowPossibleAnswers()
+        {
+            List<string> possibleAnswers = CurrentQuestion.GetPossibleAnswers();
+            int i = 0;
+            foreach (RadioButton el in AnswerMenu.Children)
+            {
+                el.Content = possibleAnswers[i++];
+            }
+        }
         private void ShowSelectedAnswer()
         {
-
-            if (User.getInstance().Answers[User.getInstance().CurrentQuestion] != (Answer)(-1))
+            if (User.getInstance().Answers[CurrentQuestion] != (Answer)(-1))
             {
                 if (AnswerMenu.Children[(int)User.getInstance().Answers[CurrentQuestion]] is RadioButton radioButton)
                 {
@@ -363,13 +359,11 @@ namespace TestAppOnWpf
                 }
             }
         }
-
         #endregion
         private void ComboBox_TextInput(object sender, TextCompositionEventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
         }
-
         private void SaveTestResult()
         {
             User.getInstance().SetTestResult();
@@ -392,9 +386,6 @@ namespace TestAppOnWpf
             User.getInstance().SetName(NamesCB.Text.ToString());
             return true;
         }
-
-        
-
         private void StartTimer()
         {
             Console.WriteLine("TimerStart...");
@@ -410,12 +401,22 @@ namespace TestAppOnWpf
         private void ResetTimer()
         {
             timer. Reset();
-            labelTime.Text = timer.GetElapsedTime();
+            labelTime .Text = timer.GetElapsedTime();
         }
         public void ShowTime(object sender, EventArgs e)
         {
             labelTime.Text = timer.GetElapsedTime();
         }
         #endregion
+        private void Log(string a)
+        {
+            bool log = true;
+            if (log)
+                Debug.WriteLine(a);
+        }
+        private void Resultsbtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

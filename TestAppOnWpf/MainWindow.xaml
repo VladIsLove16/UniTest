@@ -50,6 +50,7 @@
                   Margin="260,15,0,0" Height="34" SelectionChanged="TestChanged" />
         <Button  Content="Загрузить Тест" Grid.Column="1" HorizontalAlignment="Left" Margin="318,60,0,0" VerticalAlignment="Top" Width="100" Click="AddTest_Click" RenderTransformOrigin="-0.789,3.075"  />
         <Button Grid.Column="1" Content="Начать Тест" HorizontalAlignment="Left" Margin="254,136,0,0" VerticalAlignment="Top" Width="206" Height="37" Click="StartTest"/>
-        <TextBlock x:Name="labelTime" Grid.Column="1" HorizontalAlignment="Left" Margin="585,206,0,0" TextWrapping="Wrap" Text="Timer" VerticalAlignment="Top"/>
+        <TextBlock x:Name="labelTime" Grid.Column="1" HorizontalAlignment="Left" Margin="527,227,0,0" TextWrapping="Wrap" Text="Timer" VerticalAlignment="Top" Height="17" Width="94"/>
+        <Button Grid.Column="1" Content="Результаты" HorizontalAlignment="Left" Margin="512,43,0,0" VerticalAlignment="Top" Height="35" Width="136" Click="Resultsbtn_Click"/>
     </Grid>
 </Window>

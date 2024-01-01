@@ -20,6 +20,17 @@ namespace TestAppOnWpf
                 Questions[index] = value;
             }
         }
+        //public Question this[Question question]
+        //{
+        //    get
+        //    {
+        //        return Questions[question];
+        //    }
+        //    set
+        //    {
+        //        Questions[question] = value;
+        //    }
+        //}
         public int QuestionCount
         {
             get
@@ -54,7 +65,10 @@ namespace TestAppOnWpf
 
         private void ShuffleAnswers()
         {
-            foreach (Question question in Questions) { question.ShuffleAnswers(); }
+            foreach (Question question in Questions)
+            { 
+                question.ShuffleAnswers();
+            }
         }
 
         private void Swap(int i, int j)

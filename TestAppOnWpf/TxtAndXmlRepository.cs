@@ -87,8 +87,8 @@ namespace TestAppOnWpf
             using (var src = new StreamReader(AnswerFile, encoding: srcEncoding))
             {
                 int i = 0; string line;
-                while ((line = src.ReadLine()) != null)
-                {
+                for(int j= 0; j < test.QuestionCollection.QuestionCount; j++) {
+                    line = src.ReadLine();
                     test.QuestionCollection[i].SetRightAnswer((Answer) int.Parse(line) - 1);
                     Console.WriteLine("LoadAnswers" + i);
                     i++;

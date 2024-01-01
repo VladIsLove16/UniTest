@@ -15,7 +15,18 @@ namespace TestAppOnWpf
     {
         public Test() { }
         public Test(string title) {Title = title; }
-        public QuestionCollection QuestionCollection = new QuestionCollection();
+        private QuestionCollection questionCollection = new QuestionCollection();
+        public QuestionCollection QuestionCollection
+        {
+            get
+            {
+                return questionCollection;
+            }
+            set
+            {
+                questionCollection = value; 
+            }
+        }
         public int QuestionCount { get { return QuestionCollection.QuestionCount; } }
         public string Title;
         //public Answers Answers=new Answers();
@@ -40,11 +51,12 @@ namespace TestAppOnWpf
         {
             QuestionCollection.AddQuestion(question);
         }
-        public void AddQuestion(string question,List<string>possibleAnswers,Answer rightAnswer )
+        public void CreateQuestion(string questionString,List<string>possibleAnswers,Answer rightAnswer )
         {
-
+            Question question = new Question() { QuestionString = questionString,NumberInTest=QuestionCount,RightAnswer= rightAnswer,PossibleAnswers= possibleAnswers };
+            AddQuestion(question);
         }
-        public QuestionCollection GetQuestions()
+        public QuestionCollection GetQuestionCollection()
         {
             return QuestionCollection;
         }

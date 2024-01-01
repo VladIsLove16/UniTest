@@ -49,5 +49,13 @@ namespace TestAppOnWpf
             }
         }
         public Result() { }
+
+        internal void Clear()
+        {
+            Time = TimeSpan.Zero;
+            RightAnswers=0;
+            WrongAnswers=0;
+            Skipped=0;
+        }
     }
 }
