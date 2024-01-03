@@ -3,13 +3,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace TestAppOnWpf
 {
     [Serializable]
     public class Result
     {
-        public TimeSpan Time= TimeSpan.Zero;
+        private TimeSpan time= TimeSpan.Zero;
+        private string testTitle="Default";
+
+        [XmlIgnore]
+        public string TestTitle
+        {
+            get
+            {
+                return testTitle;
+            }
+            set
+            {
+                testTitle = value;
+            }
+        }
+        [XmlIgnore]
+        public TimeSpan Time
+        {
+            get
+            {
+                return time;
+            }
+            set
+            {
+                time = value;
+                timeString=value.ToString(@"hh\:mm\:ss\.ff");
+            }
+        }
+        private string timeString;
+        public string TimeString { 
+            get
+            {
+                return timeString;
+            }
+            set
+            {
+                timeString=value;
+            }
+        }
+
         private int _RightAnswers=0;
         public int RightAnswers {
             get { return _RightAnswers; } 
@@ -48,14 +88,34 @@ namespace TestAppOnWpf
                 _Skipped = Math.Max(value, 0);
             }
         }
-        public Result() { }
+        public Result() {
+            TestTitle = "default";
+            Time = TimeSpan.Zero;
+            RightAnswers = 0;
+            WrongAnswers = 0;
+            Skipped = 0;
+        }
+        public Result(string testTitle,int rightAnswers, int wrongAnswers, int skippedAnswers, TimeSpan time)   
+        {
+            this.TestTitle = testTitle;
+            this.RightAnswers = rightAnswers;
+            this.WrongAnswers = wrongAnswers;  
+            this.Skipped = skippedAnswers;
+            this.Time=time;
+        }
 
         internal void Clear()
         {
+            TestTitle = "default";
             Time = TimeSpan.Zero;
             RightAnswers=0;
             WrongAnswers=0;
             Skipped=0;
+        }
+
+        internal string Print()
+        {
+            return RightAnswers + "/" + WrongAnswers + "/" + Skipped + " за " + timeString;
         }
     }
 }

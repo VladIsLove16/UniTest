@@ -9,15 +9,16 @@ using System.Diagnostics;
 using System.Text;
 using System.IO;
 using static TestAppOnWpf.MainWindow;
+using MySqlX.XDevAPI.Common;
+
 namespace TestAppOnWpf
 {
     public partial class MainWindow : Window 
     {
         TestCollection TestCollection = new TestCollection();
-        IStudentCollection StudentCollection = new StudentDictCollection();
-        TxtAndXmlRepository Repository=new TxtAndXmlRepository();
-        string AnswersFolder = @"Answers";
-        string DatabasePath = "D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\DataBase\\database.xml";
+        BaseStudentCollection StudentCollection = new StudentDictCollection();
+        BaseTestLoader testLoader=new WordandTxtTestLoader("D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\Tests\\", "D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\Answers\\");
+        BaseRepository Repository=new XMLRepository("D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\DataBase\\database.xml");
         StopwatchA timer=new StopwatchA();
         public delegate void Notify();
         public event Notify notify;
@@ -66,14 +67,16 @@ namespace TestAppOnWpf
         #region Loading
         public void LoadDefaultTests()
         {
-            TestCollection.AddTests(Repository.LoadTestsFromDirectory());
+            TestCollection.AddTests(testLoader.LoadDefaultTests());
             OnTestCollectionChanged();//опять таки паттерн обсервер
-            CurrentTest = TestCollection[0];
         }
         private void LoadStudents()
         {
-            Console.WriteLine($"Загрузка списка студентов из файла: {DatabasePath}...");
-            StudentCollection.Set(Repository.GetStudentsFromFile(DatabasePath));
+            Console.WriteLine($"Загрузка списка студентов из файла: {Repository.StudentResultsPath}...");
+            StudentCollection.Set(Repository.GetStudentsFromFile());
+            foreach(Student student1 in StudentCollection.GetStudentList()) {
+                student1.Print();
+            }
             NamesCB.ItemsSource= StudentCollection.GetNames();//такую функцию нужно не здесь написать, а выполнять каждый раз когда меняется список студентов
             foreach(string student in StudentCollection.GetNames())
             {
@@ -115,9 +118,10 @@ namespace TestAppOnWpf
                 }
             }
         }
-        private void SaveStudentResult()
+        private void SaveStudentToRepository()
         {
-            Repository.SaveStudents(DatabasePath, StudentCollection.Get());
+            Loger.Log("SavingStudentToRepository");
+            Repository.SaveStudentsToFile(StudentCollection.GetStudentList());
         }
        
         #endregion
@@ -156,23 +160,14 @@ namespace TestAppOnWpf
             SaveQuestionAnswer();
             ShowExitDialogBox();
         }
-        private void AddName_Click(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrEmpty(NamesCB.Text)) return;
-            if (!StudentCollection.GetNames().Contains(NamesCB.Text))
-                StudentCollection.Add(new Student(NamesCB.Text));
-            NamesCB.Text = "";
-            NamesCB.ItemsSource = StudentCollection.GetNames();
-        }
 
         private void AddTest_Click(object sender, RoutedEventArgs e)
         {
             var openFileDialog = new Microsoft.Win32.OpenFileDialog();
             openFileDialog.Filter = "Text Files (*.txt)|*.txt";
-
             if (openFileDialog.ShowDialog() == true)
             {
-                Test test = Repository.GetTestFromFile(openFileDialog.FileName);
+                Test test = testLoader.LoadTestFromDirectory(openFileDialog.FileName);
                 TestCollection.AddTest(test);
                 OnTestCollectionChanged();//и это тоже не здесь надо писать 
             }
@@ -182,27 +177,15 @@ namespace TestAppOnWpf
         {
             TestTitles.ItemsSource=TestCollection.GetTestTitles();
         }
-        #endregion Buttons
-        private void StartTest(object sender, RoutedEventArgs e)
-        {
-            if (CurrentTest == null) { MessageBox.Show("Выберите тест"); return; }
-            if (!SetUserName()) return;
-            Testing = true;
-            StartTimer();
-            ShowTestBoxes();
-            foreach (Answer a in User.getInstance().Answers.Answers.Values)
-            {
-                Log("Ответ:"+a);
-            }
-        }
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-           //save
+            //save
         }
         private void NewUserEnter()
         {
+            Loger.Log("NewUserEnter");
             User.getInstance().NewUserEnter();
-            Testing = false;    
+            Testing = false;
             StopTimer();
             ResetTimer();
             HideTestBoxes();
@@ -211,11 +194,59 @@ namespace TestAppOnWpf
 
         private void ClearSelectedAnswer()
         {
-           foreach(RadioButton button in AnswerMenu.Children)
+            foreach (RadioButton button in AnswerMenu.Children)
             {
                 button.IsChecked = false;
             }
         }
+        #endregion Buttons
+        private void StartTest(object sender, RoutedEventArgs e)
+        {
+            if (Testing) { MessageBox.Show("Тестирование уже идёт!"); return; }
+            if (CurrentTest == null) { MessageBox.Show("Выберите тест"); return; }
+            if (!SetUserName()) return;
+            if (ResultExists())
+            {
+                MessageBoxResult result = MessageBox.Show("Результаты за выбранный тест уже существуют", "Начать тест?", MessageBoxButton.OKCancel);
+                if (result == MessageBoxResult.Cancel)
+                {
+                    return;
+                };
+            }
+            Testing = true;
+            StartTimer();
+            ShowTestBoxes();
+            foreach (Answer a in User.getInstance().Answers.Answers.Values)
+            {
+                Loger.Log("Ответ:"+a);
+            }
+        }
+
+        private bool ResultExists()
+        {
+            if (StudentCollection.Contains(User.getInstance().GetName()))
+            {
+                Loger.Log("У студента " + User.getInstance().GetName() + "уже есть результаты ");
+                Loger.Log("за тесты ");
+                foreach(TestResult testResult in StudentCollection[User.getInstance().GetName()].AllResults)
+                {
+                    Loger.Log(testResult.TestTitle+":");
+                    foreach ( Result Result in testResult.Results)
+                    {
+                        Loger.Log(Result.Print());
+                    }
+                }
+                Loger.Log("при этом за текущий тест:" + CurrentTest.Title);
+                if (StudentCollection[User.getInstance().GetName()].ContainsTestResult(CurrentTest))//cопоставление по ссылкам, а должно быть по стрингам как обычно
+                {
+                    Loger.Log("Результаты есть. ");
+                    return true;
+                }
+            }
+            Loger.Log("Результаты отсутствуют");
+            return false;
+        }
+
         #region messageBoxes
         public void ShowExitDialogBox()
         {
@@ -230,19 +261,11 @@ namespace TestAppOnWpf
                     }
                     else
                     {
-                        //SaveNames();
-                       // Console.WriteLine("SaveNames");
                         SaveTestResult();
-                        Console.WriteLine("SaveTestResult");
-                        SaveStudentResult();
-                        Console.WriteLine("SaveStudentResults");
-
-                        Log("Правильных ответов" + User.getInstance().Result.RightAnswers);
+                        SaveStudentToRepository();
+                        Loger.Log("ответы " + User.getInstance().Result.RightAnswers + User.getInstance().Result.WrongAnswers+ User.getInstance().Result.TimeString);
                         ShowResultBox();
-                        Console.WriteLine("ShowResults");
                         NewUserEnter();
-                        Console.WriteLine("NewUserEnter");
-                        Log("Правильных ответов"+User.getInstance().Result.RightAnswers);
                     }
                 }
                 catch (Exception ex)
@@ -273,14 +296,11 @@ namespace TestAppOnWpf
         #region OnChange
         private void OnNameSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Console.WriteLine("Текущий пользователь: "+User.getInstance().GetName());
+            if (NamesCB.SelectedItem != null)
+                SetUserName();
         }
         private void TestChanged(object sender, SelectionChangedEventArgs e)
         {
-            // NamesCB.Text = (string)TestTitles.SelectedItem;
-            // if (TestTitles.SelectedItem != null) {
-            //       currentTest.Number = TestTitles.SelectedIndex+1;
-            // }
             Test test= TestCollection.GetTest((string)TestTitles.SelectedItem);
             if (test == null)
             {
@@ -305,10 +325,10 @@ namespace TestAppOnWpf
         public void OnCurrentTestChanged()
         {
             if (CurrentTest == null) return;
-            Log("CurrentTes:"+CurrentTest.Title);
-            foreach(var item in CurrentTest.GetQuestionCollection().GetQuestions()) { Log(item.QuestionString); }
+            Loger.Log("CurrentTest:"+CurrentTest.Title);
+            foreach(var item in CurrentTest.GetQuestionCollection().GetQuestions()) { Loger.Log(item.QuestionString); }
             CurrentTest.ShuffleQuestions();
-            foreach (var item in CurrentTest.GetQuestionCollection().GetQuestions()) { Log(item.QuestionString); }
+            foreach (var item in CurrentTest.GetQuestionCollection().GetQuestions()) { Loger.Log(item.QuestionString); }
             SetCurrentQuestionAsDefault();
             StopTest();
             ShowCurrentTest();
@@ -316,8 +336,8 @@ namespace TestAppOnWpf
         void OnCurrentQuestionChange()
         {
             if (CurrentQuestion == null) return;
-            Log("текущий вопрос:"+CurrentQuestion.QuestionString);
-            Log("Правильный ответ:"+CurrentQuestion.RightAnswer);
+            Loger.Log("текущий вопрос:"+CurrentQuestion.QuestionString);
+            Loger.Log("Правильный ответ:"+CurrentQuestion.RightAnswer);
             ShowCurrentQuestion();
 
         }
@@ -366,32 +386,25 @@ namespace TestAppOnWpf
         }
         private void SaveTestResult()
         {
-            User.getInstance().SetTestResult();
-            User.getInstance().Result.Time = timer.ElapsedTime;
-            Student student = User.ToStudent();
-            string name = student.stringName;
-            if (!StudentCollection.Contains(name))
-            {
-                StudentCollection.Add(student);
-            }
-            else
-            {
-                StudentCollection[name].AddResult(User.getInstance().CurrentTest,User.getInstance().Result);
-            }
+            Loger.Log("SavingTestResult");
+            User.getInstance().SetResult();
+            string name = User.getInstance().GetName();
+            StudentCollection.AddResult(name, CurrentTest, User.getInstance().Result);
 
         }
         private bool SetUserName()
         {
             if (NamesCB.Text == "") { EmptyNameCB(); return false; }
             User.getInstance().SetName(NamesCB.Text.ToString());
+            Loger.Log("Текущий пользователь:" + User.getInstance().GetName());
             return true;
         }
         private void StartTimer()
         {
             Console.WriteLine("TimerStart...");
             timer.Start();
-            timer.timer.Tick += ShowTime;//плохо, надо добавить обсервера.
-            labelTime.Text =timer.GetElapsedTime();
+            timer.timer.Tick += TimerTick;//плохо, надо добавить обсервера.
+            labelTime.Text =timer.GetElapsedTimeStr();
             Console.WriteLine("TimerStarted.");
         }
         private void StopTimer()
@@ -401,19 +414,15 @@ namespace TestAppOnWpf
         private void ResetTimer()
         {
             timer. Reset();
-            labelTime .Text = timer.GetElapsedTime();
+            labelTime .Text = timer.GetElapsedTimeStr();
         }
-        public void ShowTime(object sender, EventArgs e)
+        public void TimerTick(object sender, EventArgs e)
         {
-            labelTime.Text = timer.GetElapsedTime();
+            labelTime.Text = timer.GetElapsedTimeStr();
+            User.getInstance().ElapsedTime = timer.GetElapsedTime();
         }
         #endregion
-        private void Log(string a)
-        {
-            bool log = true;
-            if (log)
-                Debug.WriteLine(a);
-        }
+       
         private void Resultsbtn_Click(object sender, RoutedEventArgs e)
         {
 

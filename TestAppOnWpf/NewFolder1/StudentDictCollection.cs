@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TestAppOnWpf
 {
     [Serializable]
-    internal class StudentDictCollection : IStudentCollection
+    internal class StudentDictCollection : BaseStudentCollection
     {
         private Dictionary<string, Student> StudentList = new Dictionary<string, Student>();
 
@@ -22,7 +22,7 @@ namespace TestAppOnWpf
                 StudentList[Name]= value;
             }
         }
-        public List<Student> Get()
+        public List<Student> GetStudentList()
         {
             return StudentList.Values.ToList();
         }
@@ -33,7 +33,9 @@ namespace TestAppOnWpf
         }
         public void Set(List<Student> list)
         {
-            foreach (Student student in list) { StudentList[student.stringName] = student; }
+            foreach (Student student in list) {
+                student.LoadTestResultsCollection();
+                StudentList[student.stringName] = student; }
         }
 
         public int StudentCount
@@ -44,9 +46,12 @@ namespace TestAppOnWpf
         {
             StudentList[student.stringName] = student;
         }
-        public void AddResult(Student student,Test test,Result result)
+        public void AddResult(string studentName,Test test,Result result)
         {
-            StudentList[student.stringName].AddResult(test,result);
+            if(!StudentList.ContainsKey(studentName))
+                StudentList[studentName]=new Student(studentName);
+            StudentList[studentName].AddResult(test,result);
+
         }
         public bool Contains(string Name)
         {

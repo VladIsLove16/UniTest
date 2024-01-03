@@ -7,30 +7,31 @@ using System.Threading.Tasks;
 
 namespace TestAppOnWpf
 {
-    internal class TxtAndXmlRepository
+    internal class WordandTxtTestLoader : BaseTestLoader
     {
-        public List<Student> GetStudentsFromFile(string studentsFolder)
+        private string testsPath;
+        private string answersPath;
+        public override string TestsPath { get { return testsPath; } set => testsPath = value; }
+        public override string AnswersPath { get { return answersPath; } set => answersPath = value; }
+        private WordandTxtTestLoader() { }
+        public WordandTxtTestLoader(string testsPath,string answersPath)
         {
-           return MyXmlSerializer.GetStudentResults(studentsFolder);
-
+            TestsPath = testsPath;
+            AnswersPath = answersPath;
         }
-        public void SaveStudents(string where, List<Student> what)
-        {
-            MyXmlSerializer.SaveStudentResults(where, what);
-        }
-        public List<Test> LoadTestsFromDirectory()
+        public override List<Test> LoadDefaultTests()
         {
             List<Test> tests= new List<Test>();
-            string folderPath = "D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\Tests";
+            string folderPath = testsPath;
             string[] files = Directory.GetFiles(folderPath, "*.txt");
             foreach (string file in files)
             {
                 Console.WriteLine("Loading test:" + file);
-                tests.Add(GetTestFromFile(file));
+                tests.Add(LoadTestFromDirectory(file));
             }
             return tests;
         }
-        public Test GetTestFromFile(string filepath)
+        public override Test LoadTestFromDirectory(string filepath)
         {
             Console.WriteLine("Loading Test from: " + filepath);
             Test test=LoadTestInfo(filepath);
@@ -69,7 +70,7 @@ namespace TestAppOnWpf
         }
         public void LoadAnswers(Test test)
         {
-            string AnswerFile;
+            string AnswerFile="default";
             if (!string.IsNullOrEmpty(test.AnswerPath))
                 AnswerFile = test.AnswerPath;
             // else if(FilePath!=null)
@@ -80,9 +81,15 @@ namespace TestAppOnWpf
             //  }
             else
             {
-                AnswerFile = "D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\Answers\\Answers_Test1.txt";
+                string[] files = Directory.GetFiles(answersPath, "*.txt");
+                foreach (string file in files)
+                {
+                    AnswerFile= file;
+                    Console.WriteLine("Answers path:" + AnswerFile);
+                }
                 test.AnswerPath = AnswerFile;
             }
+            Console.WriteLine("Loading Answers from:" + AnswerFile);
             var srcEncoding = Encoding.GetEncoding(1251);
             using (var src = new StreamReader(AnswerFile, encoding: srcEncoding))
             {

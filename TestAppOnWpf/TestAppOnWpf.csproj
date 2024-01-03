@@ -109,15 +109,24 @@
     </ApplicationDefinition>
     <Compile Include="Answer.cs" />
     <Compile Include="AnswerCollection.cs" />
+    <Compile Include="BaseTestLoader.cs" />
+    <Compile Include="Loger.cs" />
+    <Compile Include="ResultCollection.cs" />
+    <Compile Include="TestResult.cs" />
+    <Compile Include="XMLRepository.cs" />
     <Compile Include="DataTableAdapter.cs" />
-    <Compile Include="IStudentCollection.cs" />
+    <Compile Include="BaseRepository.cs" />
+    <Compile Include="BaseStudentCollection.cs" />
     <Compile Include="Name.cs" />
     <Compile Include="QuestionCollection.cs" />
+    <Compile Include="ResultsPage.xaml.cs">
+      <DependentUpon>ResultsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StopwatchA.cs" />
     <Compile Include="LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TxtAndXmlRepository.cs" />
+    <Compile Include="WordandTxtTestLoader.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="Student.cs" />
     <Compile Include="NewFolder1\StudentDictCollection.cs" />
@@ -140,6 +149,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="LoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ResultsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -167,8 +180,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="TestAppOnWpf_TemporaryKey.pfx" />
-    <None Include="DataBase\database.xlsx" />
+    <EmbeddedResource Include="DataBase\database.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -215,8 +227,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Tests\Test1.txt" />
-    <Resource Include="Tests\Test2.txt" />
+    <EmbeddedResource Include="Tests\Test1.txt" />
+    <EmbeddedResource Include="Tests\Test2.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="DataBase\database.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Answers\Answers_Test1.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

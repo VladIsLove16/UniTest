@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace TestAppOnWpf
 {
@@ -12,7 +13,13 @@ namespace TestAppOnWpf
     {
         private static User instance;
         private User(){ }
-        public Result Result=new Result();
+        private Result result=new Result("defaul",0,0,0,TimeSpan.Zero);
+        public Result Result
+        { 
+            get {return result;}
+            private set { result = value; }
+        }
+        public TimeSpan ElapsedTime;
         public static User getInstance()
         {
             if (instance == null)
@@ -58,14 +65,6 @@ namespace TestAppOnWpf
 
         public delegate void Notify();
         public event Notify OnTestChanged,OnQuestionChanged;
-        public static Student ToStudent()
-        {
-            Student student= new Student();
-            student.AddResult(User.getInstance().CurrentTest, User.getInstance().Result);
-            student.stringName = User.getInstance().Name;
-            return student;
-
-        }
         public void SetName(string Name )
         {
             this.Name = Name;
@@ -82,7 +81,7 @@ namespace TestAppOnWpf
         private void OnCurrentTestChanged()
         {
             CurrentQuestion = CurrentTest.QuestionCollection[0];
-            Console.WriteLine("Текущий ворос:"+CurrentQuestion.QuestionString );
+            Console.WriteLine("Текущий вопрос:"+CurrentQuestion.QuestionString );
             SetAllAnswersToNull();
         }
         public void SetCurrentTest(Test Test)
@@ -93,29 +92,38 @@ namespace TestAppOnWpf
         }
         public void SetAllAnswersToNull()
         {
-            ClearAnswers();
+            if (Answers == null) return;
+            if(CurrentTest == null) return;
+            Answers.Clear();
             for (int i = 0; i < CurrentTest.QuestionCount; i++)
             {
                 Answers[CurrentTest.QuestionCollection[i]] = (Answer)(-1);
             }
         }
-        public void ClearAnswers()
-        {
-            Answers.Clear();
-        }
         public void NewUserEnter()
         {
-            Result = new Result();
+            ClearResult();
             SetAllAnswersToNull();
         }
-        internal void SetTestResult()
+
+        private void ClearResult()
         {
+            if(result== null) { return; }
+            Result = new Result();
+        }
+
+        internal void SetResult()
+        {
+            string title = CurrentTest.Title;
+            TimeSpan time = ElapsedTime;
+            int r=0, w=0, s=0;
             foreach (Question question in Answers.GetQuestions())
             {
-                if (Answers[question] == question.RightAnswer) Result.RightAnswers++;
-                else if (Answers[question] == (Answer)(-1)) Result.Skipped++;
-                else Result.WrongAnswers++;
+                if (Answers[question] == question.RightAnswer) r++;
+                else if (Answers[question] == (Answer)(-1)) s++;
+                else w++;
             }
+            Result=new Result(title,r,w,s,time);
         }
 
         internal void SaveAnswer(Question question,Answer answer)

@@ -9,10 +9,13 @@ namespace TestAppOnWpf
         public DispatcherTimer timer;//надо сделать private
         Stopwatch stopwatch;
         TimeSpan elapsedTime;
-
-        public string GetElapsedTime()
+        public string GetElapsedTimeStr()
         {
             return elapsedTime.ToString(@"hh\:mm\:ss\.ff");
+        }
+        public TimeSpan GetElapsedTime()
+        {
+            return elapsedTime;
         }
         public TimeSpan ElapsedTime => elapsedTime;
         public StopwatchA()
