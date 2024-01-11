@@ -1,79 +1,21 @@
 <?xml version="1.0"?>
 <ArrayOfStudent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Student>
-    <stringName>default</stringName>
-    <ID>1</ID>
-  </Student>
-  <Student>
-    <stringName>A</stringName>
-    <ID>1</ID>
+    <StringName>default</StringName>
+    <ID>2</ID>
     <AllResults>
-      <TestTitle>Тест № 1 по теме: «Объекты патентного права»</TestTitle>
-      <Results>
-        <Result>
-          <TimeString>00:00:00.00</TimeString>
-          <RightAnswers>0</RightAnswers>
-          <WrongAnswers>0</WrongAnswers>
-          <Skipped>0</Skipped>
-        </Result>
-        <Result>
-          <TimeString>00:00:01.50</TimeString>
-          <RightAnswers>0</RightAnswers>
-          <WrongAnswers>0</WrongAnswers>
-          <Skipped>30</Skipped>
-        </Result>
-        <Result>
-          <TimeString>00:00:00.00</TimeString>
-          <RightAnswers>0</RightAnswers>
-          <WrongAnswers>0</WrongAnswers>
-          <Skipped>0</Skipped>
-        </Result>
-        <Result>
-          <TimeString>00:00:01.14</TimeString>
-          <RightAnswers>0</RightAnswers>
-          <WrongAnswers>0</WrongAnswers>
-          <Skipped>30</Skipped>
-        </Result>
-      </Results>
+      <TestResult>
+        <Results>
+          <Result>
+            <TestTitle>Тест № 2 по теме: «Понятие интеллектуальной собственности, теория интеллектуальных прав»</TestTitle>
+            <TimeString>00:00:03</TimeString>
+            <RightAnswers>0</RightAnswers>
+            <WrongAnswers>2</WrongAnswers>
+            <Skipped>18</Skipped>
+          </Result>
+        </Results>
+        <TestTitle>Тест № 2 по теме: «Понятие интеллектуальной собственности, теория интеллектуальных прав»</TestTitle>
+      </TestResult>
     </AllResults>
-    <AllResults>
-      <TestTitle>Тест № 2 по теме: «Понятие интеллектуальной собственности, теория интеллектуальных прав»</TestTitle>
-      <Results>
-        <Result>
-          <TimeString>00:00:00.00</TimeString>
-          <RightAnswers>0</RightAnswers>
-          <WrongAnswers>0</WrongAnswers>
-          <Skipped>0</Skipped>
-        </Result>
-        <Result>
-          <TimeString>00:00:01.41</TimeString>
-          <RightAnswers>0</RightAnswers>
-          <WrongAnswers>0</WrongAnswers>
-          <Skipped>20</Skipped>
-        </Result>
-        <Result>
-          <TimeString>00:00:00.90</TimeString>
-          <RightAnswers>0</RightAnswers>
-          <WrongAnswers>0</WrongAnswers>
-          <Skipped>20</Skipped>
-        </Result>
-        <Result>
-          <TimeString>00:00:00.67</TimeString>
-          <RightAnswers>0</RightAnswers>
-          <WrongAnswers>0</WrongAnswers>
-          <Skipped>20</Skipped>
-        </Result>
-        <Result>
-          <TimeString>00:00:01.38</TimeString>
-          <RightAnswers>0</RightAnswers>
-          <WrongAnswers>0</WrongAnswers>
-          <Skipped>20</Skipped>
-        </Result>
-      </Results>
-    </AllResults>
-  </Student>
-  <Student>
-    <stringName>gdfg</stringName>
-    <ID>1</ID>
   </Student>
 </ArrayOfStudent>

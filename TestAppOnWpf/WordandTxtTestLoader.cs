@@ -26,14 +26,12 @@ namespace TestAppOnWpf
             string[] files = Directory.GetFiles(folderPath, "*.txt");
             foreach (string file in files)
             {
-                Console.WriteLine("Loading test:" + file);
                 tests.Add(LoadTestFromDirectory(file));
             }
             return tests;
         }
         public override Test LoadTestFromDirectory(string filepath)
         {
-            Console.WriteLine("Loading Test from: " + filepath);
             Test test=LoadTestInfo(filepath);
             LoadAnswers(test);
             return test;
@@ -45,14 +43,13 @@ namespace TestAppOnWpf
             using (var src = new StreamReader(filepath, encoding: srcEncoding))
             {
                 test.Title = src.ReadLine();
-                Console.WriteLine("Title:" + test.Title);// а что с ними делать
                 int Quectioncount = 0;
                 string line;
                 while (!src.EndOfStream)
                 {
                     while (String.IsNullOrEmpty(line = src.ReadLine()) && !src.EndOfStream) { }
                     Question question = new Question { QuestionString = line };
-                    //Console.WriteLine("Question: " + question.QuestionString);
+                    //Loger.Log("Question: " + question.QuestionString);
                     //while (string.IsNullOrEmpty(src.ReadLine())) { }
                     for (int j = 0; j < 4; j++)
                     {
@@ -64,7 +61,7 @@ namespace TestAppOnWpf
                     test.AddQuestion(question);
                     Quectioncount++;
                 }
-                Console.WriteLine(Quectioncount);
+                Loger.Log(Quectioncount.ToString());
             }
             return test;
         }
@@ -85,11 +82,9 @@ namespace TestAppOnWpf
                 foreach (string file in files)
                 {
                     AnswerFile= file;
-                    Console.WriteLine("Answers path:" + AnswerFile);
                 }
                 test.AnswerPath = AnswerFile;
             }
-            Console.WriteLine("Loading Answers from:" + AnswerFile);
             var srcEncoding = Encoding.GetEncoding(1251);
             using (var src = new StreamReader(AnswerFile, encoding: srcEncoding))
             {
@@ -97,7 +92,6 @@ namespace TestAppOnWpf
                 for(int j= 0; j < test.QuestionCollection.QuestionCount; j++) {
                     line = src.ReadLine();
                     test.QuestionCollection[i].SetRightAnswer((Answer) int.Parse(line) - 1);
-                    Console.WriteLine("LoadAnswers" + i);
                     i++;
                 }
 

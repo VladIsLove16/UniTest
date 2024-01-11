@@ -112,6 +112,10 @@
     <Compile Include="BaseTestLoader.cs" />
     <Compile Include="Loger.cs" />
     <Compile Include="ResultCollection.cs" />
+    <Compile Include="ResultsWindow.xaml.cs">
+      <DependentUpon>ResultsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="StudentName.cs" />
     <Compile Include="TestResult.cs" />
     <Compile Include="XMLRepository.cs" />
     <Compile Include="DataTableAdapter.cs" />
@@ -119,9 +123,6 @@
     <Compile Include="BaseStudentCollection.cs" />
     <Compile Include="Name.cs" />
     <Compile Include="QuestionCollection.cs" />
-    <Compile Include="ResultsPage.xaml.cs">
-      <DependentUpon>ResultsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="StopwatchA.cs" />
     <Compile Include="LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
@@ -129,7 +130,7 @@
     <Compile Include="WordandTxtTestLoader.cs" />
     <Compile Include="Result.cs" />
     <Compile Include="Student.cs" />
-    <Compile Include="NewFolder1\StudentDictCollection.cs" />
+    <Compile Include="StudentDictCollection.cs" />
     <Compile Include="StudentListCollection.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="TestCollection.cs" />
@@ -152,7 +153,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ResultsPage.xaml">
+    <Page Include="ResultsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -175,6 +176,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Resource Include="Fonts\RubikOne-Regular.ttf" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -235,6 +237,19 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Answers\Answers_Test1.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NewFolder1\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\line1.png" />
+    <Resource Include="Images\line2.png" />
+    <Resource Include="Images\line3.png" />
+    <Resource Include="Images\line4.png" />
+    <Resource Include="Images\man.png" />
+    <Resource Include="Images\man1.png" />
+    <Resource Include="Images\menu.png" />
+    <Resource Include="Images\time.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

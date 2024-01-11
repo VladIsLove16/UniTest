@@ -81,7 +81,7 @@ namespace TestAppOnWpf
         private void OnCurrentTestChanged()
         {
             CurrentQuestion = CurrentTest.QuestionCollection[0];
-            Console.WriteLine("Текущий вопрос:"+CurrentQuestion.QuestionString );
+            Loger.Log("Текущий вопрос:"+CurrentQuestion.QuestionString );
             SetAllAnswersToNull();
         }
         public void SetCurrentTest(Test Test)

@@ -58,7 +58,7 @@ namespace TestAppOnWpf
             }
             for (int i = 0; i < Questions.Count; i++)
             {
-              //  Console.WriteLine(Questions[i].NumberInTest+" " + Questions[i].Id );
+              //  Loger.Log(Questions[i].NumberInTest+" " + Questions[i].Id );
             }
             ShuffleAnswers();
         }

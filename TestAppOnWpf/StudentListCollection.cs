@@ -39,7 +39,7 @@ namespace TestAppOnWpf
         public List<string> GetNames()
         {
            List<string> names=new List<string> ();
-            foreach(Student s in students) { names.Add(s.stringName); }
+            foreach(Student s in students) { names.Add(s.StringName); }
             return names;
         }
 

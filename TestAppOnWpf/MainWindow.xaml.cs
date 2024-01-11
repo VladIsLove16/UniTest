@@ -18,10 +18,11 @@ namespace TestAppOnWpf
         TestCollection TestCollection = new TestCollection();
         BaseStudentCollection StudentCollection = new StudentDictCollection();
         BaseTestLoader testLoader=new WordandTxtTestLoader("D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\Tests\\", "D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\Answers\\");
-        BaseRepository Repository=new XMLRepository("D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\DataBase\\database.xml");
+        BaseRepository Repository=new XMLRepository("D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\DataBase\\database.xml", "D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\DataBase\\databaseCSV.csv");
         StopwatchA timer=new StopwatchA();
         public delegate void Notify();
         public event Notify notify;
+        ResultsWindow ResultsWindow;
         public Test CurrentTest
         { 
             get
@@ -58,6 +59,7 @@ namespace TestAppOnWpf
             DataContext = this;
             LoadDefaultTests();
             LoadStudents();
+            ResultsWindow = new ResultsWindow(StudentCollection);
             NewUserEnter();
             Closing += MainWindow_Closing;
             User.getInstance().OnTestChanged += OnCurrentTestChanged;
@@ -72,16 +74,12 @@ namespace TestAppOnWpf
         }
         private void LoadStudents()
         {
-            Console.WriteLine($"Загрузка списка студентов из файла: {Repository.StudentResultsPath}...");
             StudentCollection.Set(Repository.GetStudentsFromFile());
             foreach(Student student1 in StudentCollection.GetStudentList()) {
                 student1.Print();
             }
             NamesCB.ItemsSource= StudentCollection.GetNames();//такую функцию нужно не здесь написать, а выполнять каждый раз когда меняется список студентов
-            foreach(string student in StudentCollection.GetNames())
-            {
-                Console.WriteLine($"student {student} загружен");
-            }
+           
         }
         #endregion
         #region Showing
@@ -97,10 +95,6 @@ namespace TestAppOnWpf
             QuestionBlock.Visibility = Visibility.Collapsed;
             AnswerMenu.Visibility = Visibility.Collapsed;
         }
-
-     
-
-
         #endregion
         #region Savings
         private void SaveQuestionAnswer()
@@ -120,7 +114,7 @@ namespace TestAppOnWpf
         }
         private void SaveStudentToRepository()
         {
-            Loger.Log("SavingStudentToRepository");
+            Loger.PropertyLog("SavingStudentToRepository","student");
             Repository.SaveStudentsToFile(StudentCollection.GetStudentList());
         }
        
@@ -347,7 +341,6 @@ namespace TestAppOnWpf
             ShowQuestionString();
             ShowPossibleAnswers();
             ShowSelectedAnswer();
-            Console.WriteLine(CurrentQuestion.NumberInTest + " " + CurrentQuestion.Id);
         }
         private void ShowQuestionString()
         {
@@ -401,11 +394,9 @@ namespace TestAppOnWpf
         }
         private void StartTimer()
         {
-            Console.WriteLine("TimerStart...");
             timer.Start();
             timer.timer.Tick += TimerTick;//плохо, надо добавить обсервера.
             labelTime.Text =timer.GetElapsedTimeStr();
-            Console.WriteLine("TimerStarted.");
         }
         private void StopTimer()
         {
@@ -425,7 +416,15 @@ namespace TestAppOnWpf
        
         private void Resultsbtn_Click(object sender, RoutedEventArgs e)
         {
+            //ResultsWindow.StudentCollection = StudentCollection;
+            ResultsWindow = new ResultsWindow(StudentCollection);
+            ResultsWindow.Closing += OnResultWindowClosing;
+            ResultsWindow.ShowDialog();
+        }
 
+        private void OnResultWindowClosing(object sender, CancelEventArgs e)
+        {
+            SaveStudentToRepository();
         }
     }
 }

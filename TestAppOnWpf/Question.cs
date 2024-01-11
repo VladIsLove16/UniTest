@@ -19,16 +19,16 @@ namespace TestAppOnWpf
         public Answer RightAnswer
         { get { return rightAnswer; }
             set {
-                if((int)value < -1) { Console.WriteLine("Правильный ответ не может быть меньше -1 (правильного ответа нет)"); return; }
+                if((int)value < -1) { Loger.Log("Правильный ответ не может быть меньше -1 (правильного ответа нет)"); return; }
                 
-                if ((int)value > PossibleAnswers.Count) { Console.WriteLine("Вариантов ответа меньше, чем указано"); return; }
+                if ((int)value > PossibleAnswers.Count) { Loger.Log("Вариантов ответа меньше, чем указано"); return; }
                 rightAnswer = value;
                 if ((int)value == -1)
                 {
-                    Console.WriteLine($"Теперь у вопроса {QuestionString} нет правильного ответа", QuestionString);
+                    Loger.Log($"Теперь у вопроса {QuestionString} нет правильного ответа");
                 }
                 else {
-                    Console.WriteLine($"Теперь у вопроса {QuestionString} правильный ответ: {rightAnswer.ToString()}");
+                    Loger.Log($"Теперь у вопроса {QuestionString} правильный ответ: {rightAnswer.ToString()}");
                 }
             } 
         }
@@ -46,8 +46,8 @@ namespace TestAppOnWpf
         }
         public void ShuffleAnswers()
         {
-            Console.WriteLine("PossibleAnswers.Count"+PossibleAnswers.Count);
-            Console.WriteLine(RightAnswer);
+            Loger.Log("PossibleAnswers.Count"+PossibleAnswers.Count);
+            Loger.Log(RightAnswer.ToString());
             for (int i = PossibleAnswers.Count-1; i > 0; i--)
             {
                 int j =r.Next(i);
@@ -57,10 +57,10 @@ namespace TestAppOnWpf
 
         private void Swap(int i, int j)
         {
-            Console.WriteLine("Swap"+i+j);
+            Loger.Log("Swap"+i+j);
             if (RightAnswer==(Answer) i)rightAnswer = (Answer) j;
             else if(RightAnswer == (Answer)j) rightAnswer = (Answer)i;
-            Console.WriteLine(RightAnswer);
+            Loger.Log(RightAnswer.ToString());
             string temp = PossibleAnswers[i];
             PossibleAnswers[i] = PossibleAnswers[j];
             PossibleAnswers[j] = temp;

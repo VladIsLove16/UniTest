@@ -5,8 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestAppOnWpf"
         mc:Ignorable="d"
-        Title="TestingPage" Height="450" Width="800">
+        Height="570" Width="850">
     <Grid>
-        
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#000F22" Offset="1.0" />
+                <GradientStop Color="#042456" Offset="0.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Grid>
+            <ListBox Height="40" Margin="640,157,49,337"/>
+            <Button Content="Загрузить тест" Margin="532,233,130,267" FontSize="18" Background="#5481B2" Foreground="White"/>
+            <ListBox Margin="640,311,49,182"/>
+            <Button Content="Начать тестирование" HorizontalAlignment="Left" Style="{StaticResource MyFont}" FontSize="20" Background="#5481B2" Foreground="White" Margin="478,388,0,99" Width="296" />
+            <TextBlock Foreground="#7A9AC2" Style="{StaticResource MyFont}" FontSize="24" Margin="457,311,269,175" Text="Ваше имя" RenderTransformOrigin="0.618,0.488"/>
+            <TextBlock Foreground="#7A9AC2" Style="{StaticResource MyFont}" FontSize="24" Margin="457,163,223,316" Text="Выбор теста"/>
+            <Image Source="/Images/line2.png" Margin="680,0,0,404" Stretch="None"/>
+            <Image Source="/Images/menu.png" Margin="680,76,133,437" />
+        </Grid>
+        <Grid Margin="0,0,423,0">
+            <Image Source="/Images/line1.png" Margin="0,440,255,-14" Stretch="None" />
+            <TextBlock Foreground="#7A9AC2" FontSize="36" Style="{StaticResource MyFont}" Margin="64,86,63,357" ><Run Text="Тестирования"/></TextBlock>
+            <Image Source="/Images/man1.png" Margin="26,163,25,133"/>
+        </Grid>
     </Grid>
 </Window>

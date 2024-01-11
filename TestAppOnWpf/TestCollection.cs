@@ -46,7 +46,6 @@ namespace TestAppOnWpf
             if (test.Title == null) test.Title = "NotSet";
             if(TestDictionary.ContainsKey(test.Title))
             {
-                Console.WriteLine($"Тест {test.Title} уже существует");
                 test.Title = test.Title + "2";
             }
             TestDictionary[test.Title]=test;

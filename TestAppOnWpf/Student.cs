@@ -15,12 +15,38 @@ namespace TestAppOnWpf
     [Serializable]
     public class Student
     {
-        [XmlElement(Order = 1)]
-        public string stringName { get; set; }
-        [XmlElement(Order = 2)]
-        public int ID;
-        [XmlElement(Order = 3)]
-        public List<TestResult> AllResults = new List<TestResult>();
+        [XmlIgnore]
+        private string stringName="default";
+        public string StringName
+        {
+            get
+            {
+
+                return stringName;
+            }
+            set
+            {
+                stringName = value;
+            }
+        }
+        public int ID { get; set; }
+
+        [XmlIgnore]
+        public List<TestResult> allResults = new List<TestResult>();
+        public List<TestResult> AllResults
+        {
+            get { return allResults; }
+            set { allResults = value; }
+            }
+        [XmlIgnore]
+        public List<Result> lastResults = new List<Result>();
+        [XmlIgnore]
+        public List<Result> LastResults
+        {
+            get { return lastResults; }
+            set { lastResults = value; }
+        }
+
         [XmlIgnore]
         private Dictionary<string, List<Result>> TestResults=new Dictionary<string, List<Result>>();
         [XmlIgnore]
@@ -48,12 +74,13 @@ namespace TestAppOnWpf
         private void UpdateAllResults()
         {
             AllResults.Clear();
+            LastResults.Clear();
             foreach (KeyValuePair<string, List<Result>> item in TestResults)
             {
                 TestResult testResult = new TestResult(item.Key , item.Value);
                 AllResults.Add(testResult);
+                LastResults.Add(item.Value[item.Value.Count - 1]);
             }
-            Print();
         }
 
         public bool ContainsTestResult(Test test)
@@ -86,6 +113,13 @@ namespace TestAppOnWpf
             foreach (TestResult item in AllResults)
             {
                 TestResults[item.TestTitle] = item.Results;
+                Loger.PropertyLog(item.TestTitle + "из ВСЕ РЕЗ", "TestTitle");
+                LastResults.Add(item.Results[item.Results.Count - 1]);
+            }
+            Print();
+            foreach(Result result in LastResults)
+            {
+                Loger.PropertyLog(result.TestTitle + "выполнен на " + result.RightAnswers,"TestTitle");
             }
         }
     }

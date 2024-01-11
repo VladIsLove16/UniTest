@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:TestAppOnWpf"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <Style x:Key="MyFont">
+                <Setter Property="TextElement.FontFamily" Value="/Fonts/#Rubik One" />
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

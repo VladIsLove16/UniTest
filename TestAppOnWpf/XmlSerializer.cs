@@ -26,11 +26,29 @@ namespace TestAppOnWpf
                 List<Student> students = (List<Student>)serializer.Deserialize(fileStream);
                 if (students == null)
                 {
-                    Console.WriteLine("Неудачная попытка чтения списка студентов");
                     return null;
                 }
                 return students;
             }
         }
+        //public static void SaveToCsv(List<Student> students, string filePath)
+        //{
+           
+        //    StringBuilder csvContent = new StringBuilder();
+
+        //    // Заголовок CSV
+        //    csvContent.AppendLine(TestResult.CSVFormatString);
+
+        //    // Данные
+        //    foreach (Student student in students)
+        //    {
+        //        foreach (TestResult TestResult in student.AllResults)
+        //        {
+        //            csvContent.AppendLine(TestResult.ToString());
+        //        }
+        //    }
+        //    // Сохраняем в файл
+        //    //File.WriteAllText(filePath, csvContent.ToString());
+        //}
     }
 }
