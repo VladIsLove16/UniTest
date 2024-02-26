@@ -2,19 +2,51 @@
 <ArrayOfStudent xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Student>
     <StringName>default</StringName>
-    <ID>2</ID>
+    <ID>1</ID>
     <AllResults>
       <TestResult>
         <Results>
           <Result>
-            <TestTitle>Тест № 2 по теме: «Понятие интеллектуальной собственности, теория интеллектуальных прав»</TestTitle>
-            <TimeString>00:00:03</TimeString>
-            <RightAnswers>0</RightAnswers>
-            <WrongAnswers>2</WrongAnswers>
-            <Skipped>18</Skipped>
+            <TestTitle>Тест № 1 по теме: «Объекты патентного права»</TestTitle>
+            <TimeString>00:00:08</TimeString>
+            <RightAnswers>22</RightAnswers>
+            <WrongAnswers>8</WrongAnswers>
+            <Skipped>0</Skipped>
+          </Result>
+          <Result>
+            <TestTitle>Тест № 1 по теме: «Объекты патентного права»</TestTitle>
+            <TimeString>00:00:08</TimeString>
+            <RightAnswers>1</RightAnswers>
+            <WrongAnswers>5</WrongAnswers>
+            <Skipped>24</Skipped>
           </Result>
         </Results>
-        <TestTitle>Тест № 2 по теме: «Понятие интеллектуальной собственности, теория интеллектуальных прав»</TestTitle>
+        <TestTitle>Тест № 1 по теме: «Объекты патентного права»</TestTitle>
+      </TestResult>
+    </AllResults>
+  </Student>
+  <Student>
+    <StringName>Женя</StringName>
+    <ID>1</ID>
+    <AllResults>
+      <TestResult>
+        <Results>
+          <Result>
+            <TestTitle>Тест № 1 по теме: «Объекты патентного права»</TestTitle>
+            <TimeString>00:01:00</TimeString>
+            <RightAnswers>29</RightAnswers>
+            <WrongAnswers>1</WrongAnswers>
+            <Skipped>29</Skipped>
+          </Result>
+          <Result>
+            <TestTitle>Тест № 1 по теме: «Объекты патентного права»</TestTitle>
+            <TimeString>00:00:07</TimeString>
+            <RightAnswers>0</RightAnswers>
+            <WrongAnswers>0</WrongAnswers>
+            <Skipped>29</Skipped>
+          </Result>
+        </Results>
+        <TestTitle>Тест № 1 по теме: «Объекты патентного права»</TestTitle>
       </TestResult>
     </AllResults>
   </Student>

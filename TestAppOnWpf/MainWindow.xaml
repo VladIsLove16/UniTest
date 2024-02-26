@@ -15,25 +15,20 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TextBlock x:Name="TestTitleBlock" Text="Название теста" HorizontalAlignment="Left" Margin="3,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="72" Width="230" Grid.Column="1"/>
-        <TextBlock x:Name="QuestionBlock" Margin="0,87,437,378" TextWrapping="Wrap" Grid.Column="1"><Run Text="Вопрос"/></TextBlock>
-        <StackPanel x:Name="AnswerMenu" Margin="11,218,471,71" Grid.ColumnSpan="2">
-            <RadioButton x:Name="Var1"  HorizontalAlignment="Left"  VerticalAlignment="Top" >
-                <TextBlock Text="Var1" TextWrapping="Wrap"></TextBlock>
-            </RadioButton><RadioButton x:Name="Var2"  HorizontalAlignment="Left"  VerticalAlignment="Top" >
-                <TextBlock Text="Var2" TextWrapping="Wrap"></TextBlock>
-            </RadioButton><RadioButton x:Name="Var3"  HorizontalAlignment="Left"  VerticalAlignment="Top" >
-                <TextBlock Text="Var3" TextWrapping="Wrap"></TextBlock>
-            </RadioButton><RadioButton x:Name="Var4"  HorizontalAlignment="Left"  VerticalAlignment="Top" >
-                <TextBlock Text="Var4" TextWrapping="Wrap"></TextBlock>
-            </RadioButton>
+        <TextBlock x:Name="QuestionBlock" Margin="13,222,32,313" TextWrapping="Wrap" Grid.Column="1"><Run Text="Вопрос"/></TextBlock>
+        <StackPanel x:Name="AnswerMenu" Margin="8,352,471,54" Grid.Column="1" Width="200">
+            <RadioButton x:Name="Var1" Content="Var1"  HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+            <RadioButton x:Name="Var2" Content="Var2"  HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+            <RadioButton x:Name="Var3" Content="Var3"  HorizontalAlignment="Left"  VerticalAlignment="Top"/>
+            <RadioButton x:Name="Var4" Content="Var4"  HorizontalAlignment="Left"  VerticalAlignment="Top"/>
         </StackPanel>
-        <Button x:Name="NextQuestion" Content="Следующий Вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="256,178,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="NextQuestion_Click"/>
-        <Button x:Name="PreviousQuestion" Content="Предыдущий Вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="256,238,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="PreviousQuestion_Click"/>
-        <Button x:Name="End" Content="Закончить" Grid.Column="1" HorizontalAlignment="Left" Margin="252,308,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="End_Click"/>
+        <Button x:Name="NextQuestion" Content="Следующий Вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="239,300,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="NextQuestion_Click"/>
+        <Button x:Name="PreviousQuestion" Content="Предыдущий Вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="31,301,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="PreviousQuestion_Click"/>
+        <Button x:Name="End" Content="Закончить" Grid.Column="1" HorizontalAlignment="Left" Margin="460,299,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="End_Click"/>
 
         <ComboBox x:Name="NamesCB" ItemsSource="{Binding StudentsNames}"
                   SelectedItem="{Binding SelectedOption}" Grid.Column="1" 
-                  Margin="326,88,212,456" RenderTransformOrigin="0.5,0.5" 
+                  Margin="318,86,220,457" RenderTransformOrigin="0.5,0.5" 
                   IsEditable="True" Text="{Binding UserInput}" 
                   TextInput="ComboBox_TextInput" >
             <ComboBox.RenderTransform>
@@ -52,8 +47,8 @@
                   VerticalAlignment="Top" Width="158" Grid.Column="1" 
                   Margin="260,15,0,0" Height="34" SelectionChanged="TestChanged" />
         <Button  Content="Загрузить Тест" Grid.Column="1" HorizontalAlignment="Left" Margin="318,60,0,0" VerticalAlignment="Top" Width="100" Click="AddTest_Click" RenderTransformOrigin="-0.789,3.075"  />
-        <Button Grid.Column="1" Content="Начать Тест" HorizontalAlignment="Left" Margin="254,136,0,0" VerticalAlignment="Top" Width="206" Height="37" Click="StartTest"/>
-        <TextBlock x:Name="labelTime" Grid.Column="1" HorizontalAlignment="Left" Margin="527,227,0,0" TextWrapping="Wrap" Text="Timer" VerticalAlignment="Top" Height="17" Width="94"/>
+        <Button Grid.Column="1" Content="Начать Тест" HorizontalAlignment="Left" Margin="63,142,0,0" VerticalAlignment="Top" Width="529" Height="40" Click="StartTest"/>
+        <TextBlock x:Name="labelTime" Grid.Column="1" HorizontalAlignment="Center" Margin="0,194,0,0" TextWrapping="Wrap" Text="Timer" VerticalAlignment="Top" Height="29" Width="566"/>
         <Button Grid.Column="1" Content="Результаты" HorizontalAlignment="Left" Margin="526,59,0,0" VerticalAlignment="Top" Height="35" Width="136" Click="Resultsbtn_Click"/>
 
     </Grid>

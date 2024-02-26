@@ -19,11 +19,10 @@ namespace TestAppOnWpf
             CanLog["TestTitle"] = true;
             CanLog["Student"]=true;
             CanLog["student"]=true;
-            bool log = true;
-            if (!log) return;
+            CanLog["WordandTxtTestLoader"]=true;
             if (CanLog.TryGetValue(property, out bool value))
-                if(value==true)
-                    Debug.WriteLine(a);
+                if (value != true) return;
+             Debug.WriteLine(a);
         }
     }
 }

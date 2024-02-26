@@ -16,7 +16,7 @@
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkProfile />
-    <PublishUrl>D:\UniTest\</PublishUrl>
+    <PublishUrl>D:\Publication\UniTest\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -26,7 +26,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationRevision>7</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -182,7 +182,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <EmbeddedResource Include="DataBase\database.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -229,14 +228,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Tests\Test1.txt" />
-    <EmbeddedResource Include="Tests\Test2.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="DataBase\database.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Answers\Answers_Test1.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="NewFolder1\" />
@@ -250,6 +242,14 @@
     <Resource Include="Images\man1.png" />
     <Resource Include="Images\menu.png" />
     <Resource Include="Images\time.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Answers\Тест № 1 по теме «Объекты патентного права»_Ответы.txt" />
+    <Resource Include="Answers\Тест № 2 по теме «Понятие интеллектуальной собственности, теория интеллектуальных прав»_Ответы.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Tests\Тест № 1 по теме «Объекты патентного права»_Ответы.txt" />
+    <Resource Include="Tests\Тест № 2 по теме «Понятие интеллектуальной собственности, теория интеллектуальных прав»_Ответы.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

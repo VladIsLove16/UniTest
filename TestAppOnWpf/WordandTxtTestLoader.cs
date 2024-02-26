@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Shapes;
 
 namespace TestAppOnWpf
 {
@@ -67,34 +70,42 @@ namespace TestAppOnWpf
         }
         public void LoadAnswers(Test test)
         {
-            string AnswerFile="default";
-            if (!string.IsNullOrEmpty(test.AnswerPath))
-                AnswerFile = test.AnswerPath;
-            // else if(FilePath!=null)
-            // {
-            //    
-            //    AnswerFile = "D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\Answers_"+;
-            //     Answers.AnswersFilePath = AnswerFile;
-            //  }
-            else
+            string AnswerFile="";
+            string[] answersFiles = Directory.GetFiles(answersPath, "*.txt");
+            foreach (string answersFile in answersFiles)
             {
-                string[] files = Directory.GetFiles(answersPath, "*.txt");
-                foreach (string file in files)
+                string[] folders= answersFile.Split('\\');
+                foreach (string folder in folders)
                 {
-                    AnswerFile= file;
+                    Loger.PropertyLog(folder, "WordandTxtTestLoader");
                 }
-                test.AnswerPath = AnswerFile;
+                Loger.PropertyLog("Cодержит ли" + folders[folders.Length - 1] + " СТРОКУ " + test.Title.Substring(0, 10), "WordandTxtTestLoader");
+                if (folders[folders.Length-1].Contains(test.Title.Substring(0, 10))) { AnswerFile = answersFile; Loger.PropertyLog("ДА", "WordandTxtTestLoader"); break; }
+                
+                //if (answersFile.Contains(test.Title.Substring(0, 20))) { AnswerFile = answersFile; Loger.PropertyLog("ДА", "WordandTxtTestLoader"); break; }
+                Loger.PropertyLog("Нет", "WordandTxtTestLoader");
             }
+            //AnswerFile = "D:\\Projects\\VS\\UniTest\\TestAppOnWpf\\Answers\\Тест № 1 по теме «Объекты патентного права»_Ответы.txt";
+            if (string.IsNullOrEmpty(AnswerFile)) { MessageBox.Show("Файл ответов на тест " + test.Title + " не найден", "Ошибка при загрузке", MessageBoxButton.OK); return; }
             var srcEncoding = Encoding.GetEncoding(1251);
-            using (var src = new StreamReader(AnswerFile, encoding: srcEncoding))
+            try
             {
-                int i = 0; string line;
-                for(int j= 0; j < test.QuestionCollection.QuestionCount; j++) {
-                    line = src.ReadLine();
-                    test.QuestionCollection[i].SetRightAnswer((Answer) int.Parse(line) - 1);
-                    i++;
+                using (var src = new StreamReader(AnswerFile, encoding: srcEncoding))
+                {
+                    string line;
+                    for (int j = 0; j < test.QuestionCollection.QuestionCount; j++)
+                    {
+                        line = src.ReadLine();
+                        Loger.PropertyLog("Ответ"+j+line, "WordandTxtTestLoader");
+                        test.QuestionCollection[j].SetRightAnswer((Answer)int.Parse(line) - 1);
+                    }
                 }
-
+            }
+            catch(Exception e)
+            {
+                Loger.PropertyLog("Ошибка"+e.ToString(), "WordandTxtTestLoader");
+                MessageBox.Show("Ответы на " + test.Title + " не загружены", "Ошибка при загрузке", MessageBoxButton.OK); 
+                return;
             }
         }
     }
