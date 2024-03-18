@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Text;
 using System.IO;
 using static TestAppOnWpf.MainWindow;
-using MySqlX.XDevAPI.Common;
+//using MySqlX.XDevAPI.Common;
 
 namespace TestAppOnWpf
 {
