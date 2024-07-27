@@ -6,8 +6,14 @@ namespace TestAppOnWpf.SaveLoaderSystem
     internal class SaveLoadersManager
     {
         List<ISaveLoader> saveLoaders;
-        Repository repository;
+        IRepository repository;
         ApplicationContext context;
+        public SaveLoadersManager(IRepository repository, ApplicationContext context)
+        {
+            this.repository = repository;
+            this.context = context;
+            saveLoaders.Add(new StudentsSaveLoader());
+        }
         public void Load()
         {
             repository.Load();

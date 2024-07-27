@@ -285,6 +285,7 @@
     <Compile Include="SaveServices\ISaveService.cs" />
     <Compile Include="NotImplemented\SCVSaveService.cs" />
     <Compile Include="SaveServices\JsonSaveService.cs" />
+    <Compile Include="Windows\Program.cs" />
     <Compile Include="Windows\ResultsWindow.xaml.cs">
       <DependentUpon>ResultsWindow.xaml</DependentUpon>
     </Compile>

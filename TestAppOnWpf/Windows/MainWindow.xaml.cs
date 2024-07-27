@@ -9,11 +9,6 @@ using System.Windows.Input;
 using TestAppOnWpf.Converters;
 using TestAppOnWpf.FileSaveSystem;
 using TestAppOnWpf.SaveLoaderSystem;
-
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
-using static System.Net.Mime.MediaTypeNames;
 namespace TestAppOnWpf
 {
     public partial class MainWindow : Window
@@ -21,7 +16,7 @@ namespace TestAppOnWpf
         TestCollection TestCollection = new TestCollection();
         IStudentCollection StudentCollection = new StudentDictCollection();
         string commonAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-        Repository Repository;
+        IRepository Repository;
         TxtToTestConverter txtToTestConverter;
         string TestsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Tests");
         string AnswersDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Answers");
@@ -63,14 +58,12 @@ namespace TestAppOnWpf
         public MainWindow()
         {
             InitializeComponent();
-            Repository = new(new JsonSaveService(), commonAppDataPath);
             Repository.Load();
             DataContext = this;
 
             //Host.;
             txtToTestConverter = new TxtToTestConverter(TestsDirectory, AnswersDirectory);
             LoadDefaultTests();
-            LoadStudents();
             ResultsWindow = new ResultsWindow(StudentCollection);
             NewUserEnter();
             User.getInstance().OnTestChanged += OnCurrentTestChanged;
@@ -181,7 +174,7 @@ namespace TestAppOnWpf
         }
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            //save
+            Repository.Save();
         }
         private void NewUserEnter()
         {
@@ -264,7 +257,6 @@ namespace TestAppOnWpf
                     else
                     {
                         SaveTestResult();
-                        SaveStudentToRepository();
                         Loger.Log("ответы " + User.getInstance().Result.RightAnswers + User.getInstance().Result.WrongAnswers + User.getInstance().Result.TimeString);
                         ShowResultBox();
                         NewUserEnter();
@@ -432,7 +424,6 @@ namespace TestAppOnWpf
 
         private void OnResultWindowClosing(object sender, CancelEventArgs e)
         {
-            SaveStudentToRepository();
         }
     }
 }

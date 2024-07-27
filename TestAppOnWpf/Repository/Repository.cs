@@ -1,4 +1,5 @@
 ﻿using NanoByte.Common.Storage;
+using System;
 using System.Collections.Generic;
 using TestAppOnWpf.FileSaveSystem;
 namespace TestAppOnWpf.SaveLoaderSystem
@@ -7,11 +8,10 @@ namespace TestAppOnWpf.SaveLoaderSystem
     {
         private Dictionary<string, object> repository;
         private ISaveService saveService;
-        private string folderPath;
-        public Repository(ISaveService saveService,string folderPath)
+        private string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        public Repository(ISaveService saveService)
         {
             this.saveService = saveService;
-            this.folderPath = folderPath;
         }
         public void SetData<T>(T data)
         {

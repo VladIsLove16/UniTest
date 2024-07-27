@@ -7,7 +7,7 @@ namespace TestAppOnWpf.FileSaveSystem
         const string EXTENSION = ".json";
         public void SaveData<T>(T data, string folderPath)
         {
-            string filePath = Path.Combine(folderPath, typeof(T).ToString(), EXTENSION);
+            string filePath = Path.Combine(folderPath, "\\", typeof(T).ToString(), EXTENSION);
 
             if (filePath == default)
                 filePath = typeof(T).ToString();
