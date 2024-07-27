@@ -22,7 +22,7 @@ namespace TestAppOnWpf
         IStudentCollection StudentCollection = new StudentDictCollection();
         string commonAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
         Repository Repository;
-        TxtToTestConverter TxtToTestConverter;
+        TxtToTestConverter txtToTestConverter;
         string TestsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Tests");
         string AnswersDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Answers");
         string DataBasePath = Path.Combine(Directory.GetCurrentDirectory(), "Database.xml");
@@ -67,8 +67,8 @@ namespace TestAppOnWpf
             Repository.Load();
             DataContext = this;
 
-            Host.
-            TxtToTestConverter = new TxtToTestConverter(TestsDirectory, AnswersDirectory);
+            //Host.;
+            txtToTestConverter = new TxtToTestConverter(TestsDirectory, AnswersDirectory);
             LoadDefaultTests();
             LoadStudents();
             ResultsWindow = new ResultsWindow(StudentCollection);
@@ -82,18 +82,12 @@ namespace TestAppOnWpf
         #region Loading
         public void LoadDefaultTests()
         {
-            TestCollection.AddTests(testLoader.LoadDefaultTests());
+            TestCollection.AddTests(txtToTestConverter.LoadDefaultTests());
             OnTestCollectionChanged();//опять таки паттерн обсервер
         }
         private void LoadStudents()
         {
-            StudentCollection.Set(Repository.GetStudentsFromFile());
-            foreach (Student student1 in StudentCollection.GetStudentList())
-            {
-                student1.Print();
-            }
             NamesCB.ItemsSource = StudentCollection.GetNames();//такую функцию нужно не здесь написать, а выполнять каждый раз когда меняется список студентов
-
         }
         #endregion
         #region Showing
@@ -128,8 +122,8 @@ namespace TestAppOnWpf
         }
         private void SaveStudentToRepository()
         {
-            Loger.PropertyLog("SavingStudentToRepository", "student");
-            Repository.SaveStudentsToFile(StudentCollection.GetStudentList());
+            Loger.PropertyLog("SavingStudentToRepository is not implemented", "student");
+            throw new NotImplementedException();
         }
 
         #endregion
@@ -175,7 +169,7 @@ namespace TestAppOnWpf
             openFileDialog.Filter = "Text Files (*.txt)|*.txt";
             if (openFileDialog.ShowDialog() == true)
             {
-                Test test = testLoader.LoadTestFromDirectory(openFileDialog.FileName);
+                Test test = txtToTestConverter.LoadTestFromDirectory(openFileDialog.FileName);
                 TestCollection.AddTest(test);
                 OnTestCollectionChanged();//и это тоже не здесь надо писать 
             }

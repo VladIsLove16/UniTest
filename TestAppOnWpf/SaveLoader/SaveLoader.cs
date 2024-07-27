@@ -6,22 +6,24 @@ namespace TestAppOnWpf.SaveLoaderSystem
     {
         public void Load(ApplicationContext context, IRepository repository)
         {
-            var service = new TService();//get from context
-            if (repository.TryGetData(out TData data))
-            {
-                SetupData(data, service);
-                Debug.Write("Loaded to service" + service.ToString());
-            }
-            else
-                SetupDefaultData(service);
+            //var service = new TService();//get from context
+            //if (repository.TryGetData(out TData data))
+            //{
+            //    SetupData(data, service);
+            //    Debug.Write("Loaded to service" + service.ToString());
+            //}
+            //else
+            //    SetupDefaultData(service);
+            Debug.Write("Loaded to service" + "service");
         }
 
         public void Save(ApplicationContext context, IRepository repository)
         {
-            var service = new TService();//get from context
-            TData data = GetData(service);
-            repository.SetData(data);
-            Debug.Write("Get from service" + service.ToString());
+            //var service = new TService();//get from context
+            //TData data = GetData(service);
+            //repository.SetData(data);
+            //Debug.Write("Get from service" + service.ToString());
+            Debug.Write("Get from service" + "service");
         }
         public abstract void SetupData(TData data, TService service);
         public abstract TData GetData(TService service);
