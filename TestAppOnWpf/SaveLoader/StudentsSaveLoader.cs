@@ -11,12 +11,14 @@ namespace TestAppOnWpf.SaveLoaderSystem
     {
         public override List<Student> GetData(IStudentCollection service)
         {
-            Debug.Write("Student get data");
-           return service.GetStudentList();
+            List<Student> students = service.GetStudentList();
+            Loger.PropertyLog("SaveLoader.GetData stud list size" + students.Count, "SaveLoader");
+            return students;
         }
         public override void SetupData(List<Student> data, IStudentCollection service)
         {
-            Debug.Write("Student set data");
+            Debug.WriteLine("Student setiupping data");
+            Loger.PropertyLog< Student>(data, "StudentResultSettingUp");
             service.Set(data);
         }
     }

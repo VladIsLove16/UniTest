@@ -209,10 +209,6 @@
     <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=1.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IO.RecyclableMemoryStream.1.4.1\lib\net46\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=8.2.0.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files (x86)\MySQL\MySQL Connector NET 8.2.0\MySql.Data.dll</HintPath>
-    </Reference>
     <Reference Include="NanoByte.Common, Version=2.18.2.0, Culture=neutral, PublicKeyToken=3090a828a7702cec, processorArchitecture=MSIL">
       <HintPath>..\packages\NanoByte.Common.2.18.2\lib\net472\NanoByte.Common.dll</HintPath>
     </Reference>
@@ -281,16 +277,18 @@
     <Compile Include="SaveLoader\SaveLoader.cs" />
     <Compile Include="SaveLoader\ISaveLoader.cs" />
     <Compile Include="SaveLoader\SaveLoadersManager.cs" />
+    <Compile Include="SaveLoader\StudentsSaveLoaderByData.cs" />
     <Compile Include="SaveLoader\StudentsSaveLoader.cs" />
     <Compile Include="SaveServices\ISaveService.cs" />
     <Compile Include="NotImplemented\SCVSaveService.cs" />
     <Compile Include="SaveServices\JsonSaveService.cs" />
     <Compile Include="Windows\Program.cs" />
+    <Compile Include="DTO\ResultData.cs" />
     <Compile Include="Windows\ResultsWindow.xaml.cs">
       <DependentUpon>ResultsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DTO\StudentName.cs" />
-    <Compile Include="DTO\TestResult.cs" />
+    <Compile Include="DTO\TestResults.cs" />
     <Compile Include="NotImplemented\XMLRepository.cs" />
     <Compile Include="NotImplemented\DataTableAdapter.cs" />
     <Compile Include="Repository\Repository.cs" />
@@ -302,7 +300,7 @@
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="TxtToTestConverter\TxtToTestConverter.cs" />
-    <Compile Include="DTO\Result.cs" />
+    <Compile Include="DTO\TestResult.cs" />
     <Compile Include="DTO\Student.cs" />
     <Compile Include="DTO\StudentDictCollection.cs" />
     <Compile Include="DTO\StudentListCollection.cs" />
@@ -524,16 +522,6 @@
       <FileType>Satellite</FileType>
     </PublishFile>
     <PublishFile Include="Microsoft.IO.RecyclableMemoryStream">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
-    <PublishFile Include="MySql.Data">
       <Visible>False</Visible>
       <Group>
       </Group>

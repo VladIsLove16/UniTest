@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace TestAppOnWpf
 {
@@ -8,7 +9,6 @@ namespace TestAppOnWpf
     internal class StudentDictCollection : IStudentCollection
     {
         private Dictionary<string, Student> StudentDict = new Dictionary<string, Student>();
-
         public Student this[string Name]
         {
             get
@@ -22,6 +22,7 @@ namespace TestAppOnWpf
         }
         public List<Student> GetStudentList()
         {
+            Loger.PropertyLog("Getting studList size:"+ StudentDict.Values.ToList().Count + " when dict size: " + StudentDict.Count, "StudentDictCollection");
             return StudentDict.Values.ToList();
         }
         public void Load(List<Student> keyValuePairs)
@@ -37,13 +38,11 @@ namespace TestAppOnWpf
         }
         public void Set(List<Student> list)
         {
-            //foreach (Student student in list)
-            //{
-            //    student.LoadTestResultsCollection();
-            //    StudentDict[student.StringName] = student;
-            //}
+            foreach (Student student in list)
+            {
+                StudentDict[student.StringName] = student;
+            }
         }
-
         public int StudentCount
         {
             get { return StudentDict.Count; }
@@ -52,7 +51,7 @@ namespace TestAppOnWpf
         {
             StudentDict[student.StringName] = student;
         }
-        public void AddResult(string studentName, Test test, Result result)
+        public void AddResult(string studentName, Test test, TestResult result)
         {
             if (!StudentDict.ContainsKey(studentName))
                 StudentDict[studentName] = new Student(studentName);
@@ -75,6 +74,15 @@ namespace TestAppOnWpf
         public void Delete(string studentName)
         {
             StudentDict.Remove(studentName);
+        }
+        public override string ToString()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach(Student student in StudentDict.Values)
+            {
+                stringBuilder.AppendLine(student.ToString() + "\n");
+            }
+            return stringBuilder.ToString();
         }
     }
 }

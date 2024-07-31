@@ -11,7 +11,7 @@ namespace TestAppOnWpf
         public List<string> GetNames();
         public List<Student> GetStudentList();
         public bool Contains(string Name);
-        public void AddResult(string name, Test test, Result result);
+        public void AddResult(string name, Test test, TestResult result);
         void Delete(string studentName);
     }
 }

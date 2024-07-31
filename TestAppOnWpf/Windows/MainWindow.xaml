@@ -24,13 +24,14 @@
         </StackPanel>
         <Button x:Name="NextQuestion" Content="Следующий Вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="239,300,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="NextQuestion_Click"/>
         <Button x:Name="PreviousQuestion" Content="Предыдущий Вопрос" Grid.Column="1" HorizontalAlignment="Left" Margin="31,301,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="PreviousQuestion_Click"/>
-        <Button x:Name="End" Content="Закончить" Grid.Column="1" HorizontalAlignment="Left" Margin="460,299,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="End_Click"/>
+        <Button x:Name="End" Content="Закончить" Grid.Column="1" HorizontalAlignment="Left" Margin="459,302,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="End_Click"/>
+<Button x:Name="SaveDataBtn" Content="Сохранить" Grid.Column="1" HorizontalAlignment="Left" Margin="462,365,0,0" VerticalAlignment="Top" Width="162" Height="40" Click="Save_Click"/>
 
         <ComboBox x:Name="NamesCB" ItemsSource="{Binding StudentsNames}"
                   SelectedItem="{Binding SelectedOption}" Grid.Column="1" 
                   Margin="318,86,220,457" RenderTransformOrigin="0.5,0.5" 
                   IsEditable="True" Text="{Binding UserInput}" 
-                  TextInput="ComboBox_TextInput" >
+                  TextInput="ComboBox_TextInput" SelectionChanged="OnNameSelectionChanged" >
             <ComboBox.RenderTransform>
                 <TransformGroup>
                     <SkewTransform/>

@@ -5,8 +5,8 @@ namespace TestAppOnWpf.SaveLoaderSystem
 {
     internal interface ISaveLoader
     {
-        public void Load(ApplicationContext context, IRepository repository);
+        public void Load(IRepository repository);
 
-        public void Save(ApplicationContext context, IRepository repository);
+        public void Save(IRepository repository);
     }
 }

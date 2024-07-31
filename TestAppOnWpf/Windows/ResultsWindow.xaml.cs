@@ -29,9 +29,11 @@ namespace TestAppOnWpf
         {
             foreach (Student student in StudentCollection.GetStudentList())
             {
-                foreach (Result result in student.LastResults)
+                Loger.PropertyLog("Окошко результатов студент: " + student.ToString(), "ResultsWindow");
+                foreach (TestResult result in student.GetLastResults())
                 {
-                    Results.Add(new ResultData() { Result = result, StudentName = student.StringName });
+                    Loger.PropertyLog("студент: " + student.ToString() + "result:" + result.ToString(), "ResultsWindow");
+                    Results.Add(new ResultData(student.StringName ,result));
                 }
             }
         }
@@ -42,11 +44,6 @@ namespace TestAppOnWpf
             if (result == null) return;
             Loger.PropertyLog(StudentCollection[result.StudentName].StringName + ":" + result.StudentName, "student");
 
-        }
-        public class ResultData
-        {
-            public string StudentName { get; set; }
-            public Result Result { get; set; }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

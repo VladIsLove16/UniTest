@@ -3,32 +3,32 @@ using System.Windows.Forms;
 
 namespace TestAppOnWpf.SaveLoaderSystem
 {
-    internal class SaveLoadersManager
+    public class SaveLoadersManager
     {
-        List<ISaveLoader> saveLoaders;
+        List<ISaveLoader> saveLoaders=new();
         IRepository repository;
-        ApplicationContext context;
-        public SaveLoadersManager(IRepository repository, ApplicationContext context)
+        public SaveLoadersManager(IRepository repository)
         {
             this.repository = repository;
-            this.context = context;
-            saveLoaders.Add(new StudentsSaveLoader());
+            saveLoaders.Add(new StudentsSaveLoaderByData());
         }
         public void Load()
         {
-            repository.Load();
+            repository.LoadFromFile();
             foreach (ISaveLoader loader in saveLoaders)
             {
-                loader.Load(context, repository);
+                loader.Load( repository);
             }
         }
         public void Save()
         {
             foreach (ISaveLoader loader in saveLoaders)
             {
-                loader.Save(context, repository);
+
+                Loger.PropertyLog("Loader saving: " + loader.ToString(), "SaveLoadersManager");
+                loader.Save( repository);
             }
-            repository.Save();
+            repository.SaveToFile();
         }
     }
 }

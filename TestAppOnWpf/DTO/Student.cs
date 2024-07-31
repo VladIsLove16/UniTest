@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml.Serialization;
 
 namespace TestAppOnWpf
@@ -13,7 +14,6 @@ namespace TestAppOnWpf
         {
             get
             {
-
                 return stringName;
             }
             set
@@ -22,25 +22,7 @@ namespace TestAppOnWpf
             }
         }
         public int ID { get; set; }
-
-        [XmlIgnore]
-        public List<TestResult> allResults = new List<TestResult>();
-        public List<TestResult> AllResults
-        {
-            get { return allResults; }
-            set { allResults = value; }
-        }
-        [XmlIgnore]
-        public List<Result> lastResults = new List<Result>();
-        [XmlIgnore]
-        public List<Result> LastResults
-        {
-            get { return lastResults; }
-            set { lastResults = value; }
-        }
-
-        [XmlIgnore]
-        private Dictionary<string, List<Result>> TestResults = new Dictionary<string, List<Result>>();
+        private Dictionary<Test, TestResults> TestResultsDict = new Dictionary<Test, TestResults>();
         [XmlIgnore]
         public static int StudentCount;
         private Student()
@@ -52,67 +34,48 @@ namespace TestAppOnWpf
             ID = StudentCount;
             this.stringName = name;
         }
-        public void AddResult(Test test, Result result)
+        public void AddResult(Test test, TestResult result)
         {
             Loger.Log("Попытка добавить студенту " + stringName + " результат:" + result.Print() + " к тесту: " + test.Title);
-            if (!TestResults.ContainsKey(test.Title))
+            if (!TestResultsDict.ContainsKey(test))
             {
-                TestResults[test.Title] = new List<Result>();
+                TestResultsDict[test] = new TestResults();
             }
-            TestResults[test.Title].Add(result);
-            UpdateAllResults();
+            TestResultsDict[test].Add(result);
         }
-
-        private void UpdateAllResults()
+        public List<TestResults> GetTestResults()
         {
-            AllResults.Clear();
-            LastResults.Clear();
-            foreach (KeyValuePair<string, List<Result>> item in TestResults)
-            {
-                TestResult testResult = new TestResult(item.Key, item.Value);
-                AllResults.Add(testResult);
-                LastResults.Add(item.Value[item.Value.Count - 1]);
-            }
+            return TestResultsDict.Values.ToList();
         }
-
+        public List<TestResult> GetLastResults()
+        {
+            List <TestResult> results = new List <TestResult>();
+            foreach (TestResults testResults in TestResultsDict.Values)
+            {
+                TestResult testResult = testResults.GetLast();
+                 results.Add(testResult);
+                Loger.PropertyLog("last test res:" + testResult.ToString(), "Student");
+            }
+            return results;
+        }
         public bool ContainsTestResult(Test test)
         {
-            foreach (TestResult testResult in AllResults)
-            {
-                if (testResult.TestTitle == test.Title)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return TestResultsDict.ContainsKey(test);
         }
-        public void Print()
+        public void PrintResults()
         {
             Loger.Log("У студента " + stringName + " есть следующие результаты:");
-            foreach (TestResult testResult in AllResults)
+            foreach (TestResults testResults in TestResultsDict.Values)
             {
-                Loger.Log(testResult.TestTitle);
-                foreach (Result result in testResult.Results)
+                foreach (TestResult testResult in testResults.GetTestResults())
                 {
-                    Loger.Log(result.TimeString + " " + result.Print());
+                    Loger.PropertyLog(testResult.ResultString, "Student");
                 }
             }
         }
-
-        internal void LoadTestResultsCollection()
+        public override string ToString()
         {
-            TestResults.Clear();
-            foreach (TestResult item in AllResults)
-            {
-                TestResults[item.TestTitle] = item.Results;
-                Loger.PropertyLog(item.TestTitle + "из ВСЕ РЕЗ", "TestTitle");
-                LastResults.Add(item.Results[item.Results.Count - 1]);
-            }
-            Print();
-            foreach (Result result in LastResults)
-            {
-                Loger.PropertyLog(result.TestTitle + "выполнен на " + result.RightAnswers, "TestTitle");
-            }
+            return stringName;
         }
     }
 }

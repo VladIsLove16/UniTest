@@ -775,14 +775,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="UniTest.exe" size="189440">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="UniTest.exe" size="193024">
       <assemblyIdentity name="UniTest" version="1.0.0.0" language="neutral" processorArchitecture="amd64" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>P4ON0vDC1clO2+lU687z0BXhEtMGfDWjLWpDZrqmhXA=</dsig:DigestValue>
+        <dsig:DigestValue>fUAav+XZRG1nhYkmf7QCxrFfU2he9bv6kUuP9mzfkhY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

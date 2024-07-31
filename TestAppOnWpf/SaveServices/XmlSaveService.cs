@@ -2,8 +2,9 @@
 using System.Xml.Serialization;
 namespace TestAppOnWpf.FileSaveSystem
 {
-    class XmlSaveService : ISaveService 
+    class XmlSaveService : ISaveService
     {
+        const string filename = "data";
         const string EXTENSION = ".xml";
         public void SaveData<T>(T data, string folderPath)
         {

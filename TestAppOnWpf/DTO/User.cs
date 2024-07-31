@@ -6,8 +6,8 @@ namespace TestAppOnWpf
     {
         private static User instance;
         private User() { }
-        private Result result = new Result("defaul", 0, 0, 0, TimeSpan.Zero);
-        public Result Result
+        private TestResult result = new TestResult("defaul", 0, 0, 0, TimeSpan.Zero);
+        public TestResult Result
         {
             get { return result; }
             private set { result = value; }
@@ -102,7 +102,7 @@ namespace TestAppOnWpf
         private void ClearResult()
         {
             if (result == null) { return; }
-            Result = new Result();
+            Result = new TestResult();
         }
 
         internal void SetResult()
@@ -116,7 +116,7 @@ namespace TestAppOnWpf
                 else if (Answers[question] == (Answer)(-1)) s++;
                 else w++;
             }
-            Result = new Result(title, r, w, s, time);
+            Result = new TestResult(title, r, w, s, time);
         }
 
         internal void SaveAnswer(Question question, Answer answer)

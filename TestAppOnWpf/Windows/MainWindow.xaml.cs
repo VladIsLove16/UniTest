@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Security.Policy;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -14,9 +15,9 @@ namespace TestAppOnWpf
     public partial class MainWindow : Window
     {
         TestCollection TestCollection = new TestCollection();
-        IStudentCollection StudentCollection = new StudentDictCollection();
+        IStudentCollection StudentCollection;
         string commonAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-        IRepository Repository;
+        SaveLoadersManager saveLoadersManager;
         TxtToTestConverter txtToTestConverter;
         string TestsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Tests");
         string AnswersDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Answers");
@@ -55,20 +56,24 @@ namespace TestAppOnWpf
         }
 
         public bool Testing { get; private set; }
-        public MainWindow()
+        public MainWindow(SaveLoadersManager saveLoadersManager, IStudentCollection StudentCollection)
         {
+            this.saveLoadersManager = saveLoadersManager;
+            this.StudentCollection = StudentCollection;
             InitializeComponent();
-            Repository.Load();
+            saveLoadersManager.Load();
+            Loger.Log("NamesCB: ");
             DataContext = this;
+
+            string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            LoadStudents();
 
             //Host.;
             txtToTestConverter = new TxtToTestConverter(TestsDirectory, AnswersDirectory);
             LoadDefaultTests();
-            ResultsWindow = new ResultsWindow(StudentCollection);
             NewUserEnter();
             User.getInstance().OnTestChanged += OnCurrentTestChanged;
             User.getInstance().OnQuestionChanged += OnCurrentQuestionChange;
-
             Closing += MainWindow_Closing;
 
         }
@@ -80,6 +85,19 @@ namespace TestAppOnWpf
         }
         private void LoadStudents()
         {
+            //foreach (Student student in StudentCollection.GetStudentList())
+            //{
+            //    Debug.WriteLine("STUDENT: " + student.StringName);
+            //    foreach (TestResults res in student.TestResultsList)
+            //    {
+            //        foreach (TestResult result in res.Results)
+            //        {
+            //            Loger.PropertyLog(result.TimeString, "StudentCollection");
+            //        }
+                        
+            //    }
+
+            //}
             NamesCB.ItemsSource = StudentCollection.GetNames();//такую функцию нужно не здесь написать, а выполнять каждый раз когда меняется список студентов
         }
         #endregion
@@ -113,12 +131,6 @@ namespace TestAppOnWpf
                 }
             }
         }
-        private void SaveStudentToRepository()
-        {
-            Loger.PropertyLog("SavingStudentToRepository is not implemented", "student");
-            throw new NotImplementedException();
-        }
-
         #endregion
         #region Buttons
         private void PreviousQuestion_Click(object sender, RoutedEventArgs e)
@@ -133,7 +145,8 @@ namespace TestAppOnWpf
 
         private void NextQuestion_Click(object sender, RoutedEventArgs e)
         {
-            if (User.getInstance().CurrentQuestion.NumberInTest == CurrentTest.QuestionCount - 1) ShowExitDialogBox();
+            if (User.getInstance().CurrentQuestion.NumberInTest == CurrentTest.QuestionCount - 1) 
+                ShowExitDialogBox();
             else
             {
                 SaveQuestionAnswer();
@@ -155,6 +168,16 @@ namespace TestAppOnWpf
             SaveQuestionAnswer();
             ShowExitDialogBox();
         }
+        
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            SaveData();
+        }
+
+        private void SaveData()
+        {
+            saveLoadersManager.Save();
+        }
 
         private void AddTest_Click(object sender, RoutedEventArgs e)
         {
@@ -174,7 +197,9 @@ namespace TestAppOnWpf
         }
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            Repository.Save();
+            Loger.PropertyLog("Saving", "Closing");
+            SaveData();
+            Application.Current.Shutdown();
         }
         private void NewUserEnter()
         {
@@ -223,13 +248,9 @@ namespace TestAppOnWpf
             {
                 Loger.Log("У студента " + User.getInstance().GetName() + "уже есть результаты ");
                 Loger.Log("за тесты ");
-                foreach (TestResult testResult in StudentCollection[User.getInstance().GetName()].AllResults)
+                foreach (TestResult testResult in StudentCollection[User.getInstance().GetName()].GetLastResults())
                 {
-                    Loger.Log(testResult.TestTitle + ":");
-                    foreach (Result Result in testResult.Results)
-                    {
-                        Loger.Log(Result.Print());
-                    }
+                    Loger.Log(testResult.TestTitle + ": " + testResult.ResultString);
                 }
                 Loger.Log("при этом за текущий тест:" + CurrentTest.Title);
                 if (StudentCollection[User.getInstance().GetName()].ContainsTestResult(CurrentTest))//cопоставление по ссылкам, а должно быть по стрингам как обычно
@@ -257,6 +278,7 @@ namespace TestAppOnWpf
                     else
                     {
                         SaveTestResult();
+                        
                         Loger.Log("ответы " + User.getInstance().Result.RightAnswers + User.getInstance().Result.WrongAnswers + User.getInstance().Result.TimeString);
                         ShowResultBox();
                         NewUserEnter();
@@ -383,11 +405,19 @@ namespace TestAppOnWpf
             User.getInstance().SetResult();
             string name = User.getInstance().GetName();
             StudentCollection.AddResult(name, CurrentTest, User.getInstance().Result);
-
+            Loger.PropertyLog("Имена студентов", "StudentResultAdded");
+            foreach (string stringName in StudentCollection.GetNames())
+            {
+                Loger.PropertyLog(stringName, "StudentResultAdded");
+            }
+            NamesCB.ItemsSource = StudentCollection.GetNames();
         }
         private bool SetUserName()
         {
-            if (NamesCB.Text == "") { EmptyNameCB(); return false; }
+            if (NamesCB.Text == "") { 
+                EmptyNameCB();
+                return false; 
+            }
             User.getInstance().SetName(NamesCB.Text.ToString());
             Loger.Log("Текущий пользователь:" + User.getInstance().GetName());
             return true;
@@ -416,7 +446,6 @@ namespace TestAppOnWpf
 
         private void Resultsbtn_Click(object sender, RoutedEventArgs e)
         {
-            //ResultsWindow.StudentCollection = StudentCollection;
             ResultsWindow = new ResultsWindow(StudentCollection);
             ResultsWindow.Closing += OnResultWindowClosing;
             ResultsWindow.ShowDialog();
@@ -424,6 +453,12 @@ namespace TestAppOnWpf
 
         private void OnResultWindowClosing(object sender, CancelEventArgs e)
         {
+            Debug.WriteLine("Window closing");
+        }
+
+        private void NamesCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

@@ -24,11 +24,11 @@ namespace TestAppOnWpf
                 rightAnswer = value;
                 if ((int)value == -1)
                 {
-                    Loger.Log($"Теперь у вопроса {QuestionString} нет правильного ответа");
+                    Loger.PropertyLog($"Теперь у вопроса {QuestionString} нет правильного ответа","Question");
                 }
                 else
                 {
-                    Loger.Log($"Теперь у вопроса {QuestionString} правильный ответ: {rightAnswer.ToString()}");
+                    Loger.PropertyLog($"Теперь у вопроса {QuestionString} правильный ответ: {rightAnswer.ToString()}","Question");
                 }
             }
         }

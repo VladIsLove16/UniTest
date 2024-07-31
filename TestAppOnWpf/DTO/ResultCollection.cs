@@ -7,13 +7,13 @@ namespace TestAppOnWpf
     [Serializable]
     public class ResultCollection
     {
-        private List<Result> results;
-        public List<Result> Results
+        private List<TestResult> results;
+        public List<TestResult> Results
         {
             get { return results; }
             set { results = value; }
         }
-        public void Add(Result result)
+        public void Add(TestResult result)
         {
             results.Add(result);
         }
